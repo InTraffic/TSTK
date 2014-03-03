@@ -14,20 +14,7 @@ import zmq
 from Queue             import PriorityQueue
 from inspect           import getargspec
 #-----------------------------------------------------------
-from event_store       import EventStore
-from gps_sim           import GPSSim
-from train             import Train
-from portal            import Portal
-from trees2rita        import Trees2Rita
-from rita_notification import RitaNotification
-from timespec          import parse_timespec
-from otis_player.focon import FOCON
-from otis_player.cc    import CC
-from soap_notification import SoapNotification
-#-----------------------------------------------------------
 
-import otis_version
-#-----------------------------------------------------------
 
 class ScenarioPlayerException(Exception):
     """Base class for ScenarioPlayer exceptions"""
@@ -49,13 +36,13 @@ class ScenarioPlayer(object):
     * context -- zmq context.
 
     """
-    def __init__( self, event_store, test_case ):
+    def __init__( self, event_store, test_case, system_name ):
         self.priority_queue = PriorityQueue()
         self._start_time = None
         self.runit = 1
         self.call_backs  = {}
         self.event_store = event_store
-        self.logger      = logging.getLogger( 'otis_player.ScenarioPlayer' )
+        self.logger      = logging.getLogger( 'ScenarioPlayer' )
         self.test_case   = test_case
         self.old = signal.signal( signal.SIGINT, self.control_c_handler )
 
