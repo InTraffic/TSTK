@@ -1,0 +1,50 @@
+#!/usr/bin/env python2
+"""OTIS focon_simulator.
+
+Usage
+    ./focon_simulator <command>  <id>
+    command :== <start|restart|stop>
+    id      :== <0|1>
+
+Initializes and starts the focon_simulator.
+Writes all logging data to /tmp/focon_simulator_<id>.log
+
+"""
+
+#------------------------------------------------------------------
+import sys
+import os
+import lversion
+from   dispatcher import Dispatcher
+from   tis_daemon import TISDaemon
+#------------------------------------------------------------------
+
+class FOCONDaemon(TISDaemon):
+    """Class to turn focon simulator into a server that runs in the background.
+    """
+    def __init__(self, name, daemon_id ):
+        OTISDaemon.__init__( self, name, daemon_id )
+
+    def run(self):
+        """Start the dispatcher
+        """
+        # If we run, we want logging...
+        self.setup_logging()
+        # Start simulator
+        self.logger.info('Starting FOCON simulator')
+        self.logger.info( version.get_version() )
+        debug_flag = os.environ.has_key( 'OTIS_DEBUG' )
+        # All the actual work is done by the dispatcher.
+        dispatcher = Dispatcher()
+        dispatcher.run( self.daemon_id )
+
+#------------------------------------------------------------------
+if __name__ == "__main__":
+    if len(sys.argv) == 3:
+        daemon = FOCONDaemon( 'focon_simulator', sys.argv[2] )
+        daemon.startup()
+    else:
+        print "Usage: %s start|stop|restart|version <id>" % sys.argv[0]
+        sys.exit(2)
+
+
