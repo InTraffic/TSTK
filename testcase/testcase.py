@@ -1,3 +1,19 @@
+#-----------------------------------------------------------
+from event_store       import EventStore
+from gps_sim           import GPSSim
+from train             import Train
+from portal            import Portal
+from trees2rita        import Trees2Rita
+from rita_notification import RitaNotification
+from timespec          import parse_timespec
+from otis_player.focon import FOCON
+from otis_player.cc    import CC
+from soap_notification import SoapNotification
+#-----------------------------------------------------------
+
+import otis_version
+#-----------------------------------------------------------
+
 class TestCase_Exception(Exception):
     """Base class for TestCase exceptions."""
     pass
@@ -34,7 +50,7 @@ class TestCase(object):
         # Setup logging
         logger = logging.getLogger( 'otis_player' )
         logger.setLevel( logging.INFO )
-        logfile = os.environ['OTIS_LOGGING'] + '/otis_player.log'
+        logfile = 'bin/otis_player.log'
         filehandler = logging.FileHandler( logfile )
         filehandler.setLevel( logging.INFO )
         formatter = logging.Formatter(
@@ -86,7 +102,7 @@ class TestCase(object):
         scripts running at the same time.
         """
 
-        lock_name = os.environ['OTIS_LOGGING'] + '/otis.lock'
+        lock_name = 'log/otis.lock'
         if os.path.exists( lock_name ):
             # Find the process that has lock_name open.
             subp = subprocess.Popen(['lsof', '-t', lock_name],
@@ -119,7 +135,7 @@ class TestCase(object):
             print 'closing lock'
             self.lock.close()
             self.lock = None
-
+		
 
     def add_cc( self ):
         """Add the CC driver to the test case
@@ -129,7 +145,7 @@ class TestCase(object):
         self.logger.info('Adding CC driver')
 
         # Path to the CC simulator
-        cc_path = os.environ['OTIS_HOME'] + '/cc_simulator/cc_daemon'
+        cc_path = 'bin/cc_simulator/cc_daemon'
         cc = CC( self.event_store, self.player.context )
         if self.cc is None :
             cc_id = 0
@@ -155,8 +171,7 @@ class TestCase(object):
         """
         self.logger.info('Adding FOCON driver')
 
-        focon_path = ( os.environ['OTIS_HOME'] + 
-                '/focon_simulator/focon_daemon' )
+        focon_path = ( 'bin/focon_simulator/focon_daemon' )
         focon = FOCON( self.event_store, self.player.context )
         if self.focon is None :
             focon_id = 0
@@ -183,7 +198,7 @@ class TestCase(object):
         """
         self.logger.info('Adding gps driver')
 
-        gps_path = os.environ['OTIS_HOME'] + '/gps_simulator/gps_daemon'
+        gps_path = 'bin/gps_simulator/gps_daemon'
 
         gps = GPSSim( self.event_store )
         if self.gps is None :
@@ -233,14 +248,14 @@ class TestCase(object):
             self.rita2trees_a.append( rita2trees )
 
             # Start rita2trees if not already started.
-            r2t_path = os.environ['OTIS_HOME'] + '/rita2trees/rita2trees.py'
+            r2t_path = 'bin/rita2trees/rita2trees.py'
             subprocess.Popen([r"python", r2t_path, 
                 "restart", str( r2t_id ) ]).wait()
 
     def add_soap(self):
         self.logger.info('Adding SOAP driver')
 
-        soap_path = os.environ['OTIS_HOME'] + '/osoap/otis_soap'
+        soap_path = 'bin/osoap/otis_soap'
         soap = SoapNotification(self.event_store, self.player.context)
         if self.soap  is None :
             soap_id = 0
