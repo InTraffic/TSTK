@@ -1,5 +1,8 @@
 #-----------------------------------------------------------
 from event_store       import EventStore
+from scenarioplayer    import ScenarioPlayer
+import versionmanager
+'''
 from gps_sim           import GPSSim
 from train             import Train
 from portal            import Portal
@@ -13,6 +16,10 @@ from soap_notification import SoapNotification
 
 import otis_version
 #-----------------------------------------------------------
+
+PYTHON3_PATH = 'bin/python3'
+PYTHON2_PATH = 'bin/python2' 
+'''
 
 class TestCase_Exception(Exception):
     """Base class for TestCase exceptions."""
@@ -45,12 +52,17 @@ class TestCase(object):
     * portal -- the Portal driver,
     * focon -- the FOCON driver.
     """
-    def __init__( self, name, debug=False ):
-        self.kill_previous_script()
+    def __init__( self, name, test_system_name, debug=False ):
+	"""Parameters:
+	name -- The name given to the testcase
+	test_system_name -- The name of the system which is being tested
+	"""
+	
+        self.kill_previous_script(test_system_name)
         # Setup logging
-        logger = logging.getLogger( 'otis_player' )
+        logger = logging.getLogger( test_system_name )
         logger.setLevel( logging.INFO )
-        logfile = 'bin/otis_player.log'
+        logfile = '{0}'.format(test_system_name)
         filehandler = logging.FileHandler( logfile )
         filehandler.setLevel( logging.INFO )
         formatter = logging.Formatter(
@@ -58,7 +70,7 @@ class TestCase(object):
         filehandler.setFormatter( formatter )
         logger.addHandler( filehandler )
         self.logger      = logger
-        self.logger.info( otis_version.otis_version() )
+        self.logger.info( versionmanager.get_version() ) 
         self.logger.info('Starting testcase ' + name)
 
         script_name = sys.argv[0]
@@ -72,6 +84,7 @@ class TestCase(object):
         self.event_store = EventStore( title=name, debug=debug )
         self.player      = ScenarioPlayer( self.event_store, self )
 
+'''
         # Easy access to the first instance of each type of driver.
         # Also needed for backwards compatibility.
         #
@@ -96,13 +109,13 @@ class TestCase(object):
         self.focon_a      = []
         self.cc_a         = []
         self.soap_a       = []
-
-    def kill_previous_script( self ):
+'''
+    def kill_previous_script( self, test_system_name ):
         """Kill an already running test script. Can't have to 
         scripts running at the same time.
         """
 
-        lock_name = 'log/otis.lock'
+        lock_name = 'log/{0}.lock'.format(test_system_name)
         if os.path.exists( lock_name ):
             # Find the process that has lock_name open.
             subp = subprocess.Popen(['lsof', '-t', lock_name],
@@ -136,7 +149,7 @@ class TestCase(object):
             self.lock.close()
             self.lock = None
 		
-
+'''
     def add_cc( self ):
         """Add the CC driver to the test case
 
@@ -145,7 +158,7 @@ class TestCase(object):
         self.logger.info('Adding CC driver')
 
         # Path to the CC simulator
-        cc_path = 'bin/cc_simulator/cc_daemon'
+        cc_path = 'bin/cc_daemon'
         cc = CC( self.event_store, self.player.context )
         if self.cc is None :
             cc_id = 0
@@ -160,7 +173,7 @@ class TestCase(object):
         self.cc_a.append( cc )
         # Start CC simulator if not already started.
         subprocess.Popen(
-              [r"python", cc_path, "restart", str( cc_id ) ]).wait()
+              [PYTHON3_PATH, cc_path, "restart", str( cc_id ) ]).wait()
         self.player.add_socket( cc.message_link,
                                  cc.on_message )
 
@@ -171,7 +184,7 @@ class TestCase(object):
         """
         self.logger.info('Adding FOCON driver')
 
-        focon_path = ( 'bin/focon_simulator/focon_daemon' )
+        focon_path = ( 'bin/focon_daemon' )
         focon = FOCON( self.event_store, self.player.context )
         if self.focon is None :
             focon_id = 0
@@ -184,7 +197,7 @@ class TestCase(object):
 
         self.focon_a.append( focon )
         # Start FOCON simulator if not already started.
-        subprocess.Popen([r"python", focon_path, 
+        subprocess.Popen([PYTHON3_PATH, focon_path, 
             "restart", str( focon_id ) ]).wait()
         self.player.add_socket( focon.message_link,
                                 focon.on_message )
@@ -198,7 +211,7 @@ class TestCase(object):
         """
         self.logger.info('Adding gps driver')
 
-        gps_path = 'bin/gps_simulator/gps_daemon'
+        gps_path = 'bin/gps_daemon'
 
         gps = GPSSim( self.event_store )
         if self.gps is None :
@@ -213,7 +226,7 @@ class TestCase(object):
         gps.dev_id = gps_id
         self.gps_a.append( gps )
         # Start GPS simulator if not already started.
-        subprocess.Popen([r"python", gps_path, 
+        subprocess.Popen([PYTHON3_PATH, gps_path, 
             "restart", str( gps_id ) ]).wait()
 
 
@@ -248,14 +261,14 @@ class TestCase(object):
             self.rita2trees_a.append( rita2trees )
 
             # Start rita2trees if not already started.
-            r2t_path = 'bin/rita2trees/rita2trees.py'
-            subprocess.Popen([r"python", r2t_path, 
+            r2t_path = 'bin/rita2trees.py'
+            subprocess.Popen([PYTHON2_PATH, r2t_path, l
                 "restart", str( r2t_id ) ]).wait()
 
     def add_soap(self):
         self.logger.info('Adding SOAP driver')
 
-        soap_path = 'bin/osoap/otis_soap'
+        soap_path = 'bin/otis_soap'
         soap = SoapNotification(self.event_store, self.player.context)
         if self.soap  is None :
             soap_id = 0
@@ -268,7 +281,7 @@ class TestCase(object):
         self.soap_a.append(soap)
         # Start Soap Drive if not already started.
         subprocess.Popen(
-              [r"python", soap_path, "restart" ]).wait()
+              [PYTHON2_PATH, soap_path, "restart" ]).wait()
         self.player.add_socket(soap.message_link, soap.on_message)
 
 
@@ -329,6 +342,7 @@ class TestCase(object):
         else :
             raise TestCase_Too_Many_Drivers( 
                        "Too many portal drivers" )
+'''
 
     def add_step( self, when, step, show=True, question=None ):
         """ See :`meth:ScenarioPlayer.add_step`"""

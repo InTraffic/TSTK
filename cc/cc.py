@@ -6,7 +6,7 @@
 import logging
 import copy
 import zmq
-from cc_simulator.message import message_type_string
+from message import message_type_string
 
 
 class CC( object ):

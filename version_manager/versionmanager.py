@@ -1,22 +1,22 @@
 #!/usr/bin/env python2
 #
 """
-Module to get and set the OTIS version.
+Module to get and set the test system version.
 
-This module is used to show the current OTIS version in the
+This module is used to show the current test system version in the
 logging of the various modules, and to set the new version
-when release a new version of OTIS.
+when release a new version of test system.
 """
 import os, sys
 
 
 usage = """
 Usage
-    Set OTIS version
-    ./otis_version.py update <version string>
+    Set test system version
+    ./versionmanager.py update <version string>
 
-    Get OTIS version
-    ./otis_version.py
+    Get test system version
+    ./versionmanager.py
 """
 
 #------------------------------------------------------------------
@@ -26,7 +26,7 @@ def version_file():
     return 'version.txt'
 
 def get_version():
-    """Read otis version from version file"""
+    """Read test system version from version file"""
         try:
             verf = file( version_file(), 'r')
             current_version = verf.read().strip()
@@ -57,5 +57,5 @@ if __name__ == "__main__":
                 sys.stderr.write( message % sys.argv[1] )
                 sys.exit(1)
         else:
-            print otis_version()
+            print get_version()
 

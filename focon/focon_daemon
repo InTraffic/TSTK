@@ -14,7 +14,8 @@ Writes all logging data to /tmp/focon_simulator_<id>.log
 #------------------------------------------------------------------
 import sys
 import os
-import lversion
+import version
+
 from   dispatcher import Dispatcher
 from   tis_daemon import TISDaemon
 #------------------------------------------------------------------
@@ -23,7 +24,7 @@ class FOCONDaemon(TISDaemon):
     """Class to turn focon simulator into a server that runs in the background.
     """
     def __init__(self, name, daemon_id ):
-        OTISDaemon.__init__( self, name, daemon_id )
+        TISDaemon.__init__( self, name, daemon_id )
 
     def run(self):
         """Start the dispatcher
