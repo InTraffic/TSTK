@@ -1,0 +1,51 @@
+#!/usr/bin/python
+"""OTIS cc_simulator.
+
+Usage
+    ./cc_simulator <command>  <id>
+    command :== <start|restart|stop>
+    id      :== <0|1>
+
+Initializes and starts the cc_simulator.
+Writes all logging data to /tmp/cc_simulator_<id>.log
+
+"""
+
+#------------------------------------------------------------------
+import sys
+import version
+import os
+
+from   dispatcher import Dispatcher
+from   otis_daemon import OTISDaemon
+#------------------------------------------------------------------
+
+class CCDaemon(TISDaemon):
+    """Class to turn cc simulator into a server that runs in the background.
+    """
+    def __init__(self, name, daemon_id ):
+        TISDaemon.__init__( self, name, daemon_id )
+
+    def run(self):
+        """Start the dispatcher
+        """
+        # If we run, we want logging...
+        self.setup_logging()
+        # Start simulator
+        self.logger.info('Starting CC simulator')
+        self.logger.info( otis_version.otis_version() )
+        debug_flag = os.environ.has_key( 'OTIS_DEBUG' )
+        # All the actual work is done by the dispatcher.
+        dispatcher = Dispatcher( )
+        dispatcher.run( self.daemon_id, debug_flag )
+
+#------------------------------------------------------------------
+if __name__ == "__main__":
+    if len(sys.argv) == 3:
+        daemon = CCDaemon( 'cc_simulator', sys.argv[2] )
+        daemon.startup()
+    else:
+        print "Usage: %s start|stop|restart|version <id>" % sys.argv[0]
+        sys.exit(2)
+
+
