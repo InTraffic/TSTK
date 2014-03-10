@@ -16,14 +16,25 @@ class Usbrly08b(object):
     implementation of a more descriptive subclass in a project. This'll allow 
     for the addition of logging and better understandable methods and/or
     functions.
-
     """
 
-    def __init__( self, eventstore, train_id, debug=False ):
-        device = '/dev/usbrly08_%d' % train_id
+    def __init__( self, device_id, debug=False ):
+        """ Initialize the usbrly08b class.
+        
+        Arguments: 
+        device_id -- Used to specify which usbrly device should be interacted 
+                     with, because more than one can be attached to a system at
+                     a time.
+        debug -- Use to specify if it should be run in debug mode. The serial 
+                 interface will not be initialized and the methods will not try
+                 to send commands if debug mode is activated.
+
+        The '/dev/usbrly08' in the device variable is a link created by a udev
+        rule.       
+        """
+        device = '/dev/usbrly08_{0}'.format(device_id)
         self.debug = debug
-        self.eventstore = eventstore
-        self.dev_id = train_id
+        self.dev_id = device_id
         
         if not self.debug :
             self.serial = serial.Serial( device, 19200, parity='N',
