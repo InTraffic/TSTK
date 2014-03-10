@@ -16,6 +16,10 @@ class Usbrly08b(object):
     implementation of a more descriptive subclass in a project. This'll allow 
     for the addition of logging and better understandable methods and/or
     functions.
+
+    Attributes:
+    device_id -- the id of the usbrly08b board to communicate with.
+    debug -- whether or not this module is to run in a debugging mode.
     """
 
     def __init__( self, device_id, debug=False ):
