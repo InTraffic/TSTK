@@ -33,6 +33,31 @@ class Dispatcher(object):
         """Controlled shutdown so we can cleanup."""
         self.go_on = False
         return False
+
+    def create_sockets(self):
+        # Open a socket to listen for commands from the scenario player
+        address = "tcp://*:{0}".format(self.command_listen_port)
+        self.logger.info( "Command subscription at {0}".format(address)
+        command_socket  = self.context.socket(zmq.SUB)
+        command_socket.bind(address)
+        command_socket.setsockopt(zmq.SUBSCRIBE, "")
+        
+        # Add the sockets to the zmq poller.
+        self.poller = zmq.Poller()
+        self.poller.register(accept_socket,  zmq.POLLIN)
+        self.poller.register(command_socket, zmq.POLLIN)
+
+        # Register the call backs.
+        self.call_backs[accept_socket.fileno()] = (accept_socket, self.accept)
+        self.call_backs[command_socket] = (command_socket, 
+                                           self.process_player_command)
+
+        # Not part of the poller
+        # Message forwarding link to player
+        address = "tcp://*:{0}".format(self.message_forward_port)
+        self.logger.info("Publishing on " + address)
+        self.repeater_socket = self.context.socket(zmq.PUB)
+        self.repeater_socket.bind(address)
     
     def accept(self, a_socket):
         """Accept a connection from the system.
@@ -45,19 +70,66 @@ class Dispatcher(object):
                 system_socket, self.process_message)
         self.system_socket = system_socket
 
+    def process_player_command(self, a_socket):
+        """ Process a command from the scenario player.
+        """
+        # receive the command
+        command = a_socket.recv_pyobj()
+        self.logger.info('received command from scenario player: {0}'
+                         .format(type(command)))
+        self.system_socket.send(self.message.to_message(command))
+    
+    def process_message(self, a_socket):
+        """ Receive and forward a message from the system """
+        self.logger.info( 'Data from the system' )
+        # We do not know beforehand how big the blob is.
+        data = a_socket.recv( 2048 )
+        if data == "" :
+            # Connection was closed, so unregister and close the socket.
+            self.poller.unregister(a_socket)
+            del self.call_backs[a_socket.fileno()]
+            a_socket.close()
+            self.system_socket = None
+        else :
+            a_message = message.from_message(blob = data)
+            self.logger.info('Copying data to player')
+            self.repeater_socket.send_pyobj(a_message)
+    
+    def run(self):
+        # Catch any Control-C
+        signal.signal(signal.SIGINT, self.control_c_handler)
+        self.create_sockets()
+        
+        while self.go_on :
+            # Note that poller uses fileno() as the key for non-zmq sockets.
+            socks = dict(self.poller.poll(60000)) # Timeout in ms, 1 minute
+            for socket_key in self.call_backs.copy() : 
+                    # Need copy here cause we might modify the call_backs
+                    # while in the call back functions.
+                if socket_key in socks and socks[socket_key] == zmq.POLLIN:
+                    if socket_key in self.call_backs: #TODO The forwarder stuff could fit here as extra if statement.
+                        cbp = self.call_backs[socket_key]
+                        function =  cbp[1]
+                        function(cbp[0])
+
+            self.logger.info("Still alive")
+            self.run(socks)
+        self.logger.info("Stopping")
+        self.context.term()
+
 #------------------------------------------------------------------------------
 
 class TCPDispatcher(Dispatcher):
     def __init__(self, dispatcher_type, dispatcher_id):
         Dispatcher.__init__(self, name, dispatcher_id)
         
-        tcp_config = configparser.ConfigParser()
-        tcp_config.read('dispatcher.conf')
-        tcp_dispatcher_section = ('tcp-dispatcher-{0}-{1}'
+        config = configparser.ConfigParser()
+        config.read('dispatcher.conf')
+        dispatcher_section = ('dispatcher-{0}-{1}'
                                   .format(dispatcher_type, dispatcher_id))
 
-        if (tcp_dispatcher_section) in tcp_config.sections()):
-            entries = tcp_config[tcp_dispatcher_section]
+        if (dispatcher_section) in config.sections()):
+            entries = config[dispatcher_section]
             # path to the message class
             self.message_path = entries['MessagePath']
             if message_path is not None:
@@ -101,78 +173,15 @@ class TCPDispatcher(Dispatcher):
         accept_socket.bind((self.accept_address, self.port))        
         # Only handle one connection at a time.
         accept_socket.listen(1)
-        
-        # Open a socket to listen for commands from the scenario player
-        address = "tcp://*:{0}".format(self.command_listen_port)
-        self.logger.info( "Command subscription at {0}".format(address)
-        command_socket  = self.context.socket(zmq.SUB)
-        command_socket.bind(address)
-        command_socket.setsockopt(zmq.SUBSCRIBE, "")
-        
-        # Add the sockets to the zmq poller.
-        self.poller = zmq.Poller()
-        self.poller.register(accept_socket,  zmq.POLLIN)
-        self.poller.register(command_socket, zmq.POLLIN)
 
-        # Register the call backs.
-        self.call_backs[accept_socket.fileno()] = (accept_socket, self.accept)
-        self.call_backs[command_socket] = (command_socket, 
-                                           self.process_player_command)
+        # Let the superclass finish the creation of the rest of the 
+        # sockets, because it is the same.
+        Dispatcher.create_sockets(self)
 
-        # Not part of the poller
-        # Message forwarding link to player
-        address = "tcp://*:{0}".format(self.message_forward_port)
-        self.logger.info("Publishing on " + address)
-        self.repeater_socket = self.context.socket(zmq.PUB)
-        self.repeater_socket.bind(address)
-        
-
-    def process_player_command(self, a_socket):
-        """ Process a command from the scenario player.
-        """
-        # receive the command
-        command = a_socket.recv_pyobj()
-        self.logger.info('received command from scenario player: {0}'
-                         .format(type(command)))
-        self.system_socket.send(self.message.to_message(command))
-
-    def process_message(self, a_socket):
-        """ Receive and forward a message from the system """
-        self.logger.info( 'Data from the system' )
-        # We do not know beforehand how big the blob is.
-        data = a_socket.recv( 2048 )
-        if data == "" :
-            # Connection was closed, so unregister and close the socket.
-            self.poller.unregister(a_socket)
-            del self.call_backs[a_socket.fileno()]
-            a_socket.close()
-            self.system_socket = None
-        else :
-            a_message = message.from_message(blob = data)
-            self.logger.info('Copying data to player')
-            self.repeater_socket.send_pyobj(a_message)
-
-    def run():
-        # Catch any Control-C
-        signal.signal(signal.SIGINT, self.control_c_handler)
-        self.create_sockets()
-        
-        while self.go_on :
-            # Note that poller uses fileno() as the key for non-zmq sockets.
-            socks = dict(self.poller.poll(60000)) # Timeout in ms, 1 minute
-            for socket_key in self.call_backs.copy() : 
-                    # Need copy here cause we might modify the call_backs
-                    # while in the call back functions.
-                if socket_key in socks and socks[socket_key] == zmq.POLLIN:
-                    if socket_key in self.call_backs:
-                        cbp = self.call_backs[socket_key]
-                        function =  cbp[1]
-                        function(cbp[0])
-
-            self.logger.info("Still alive")
-
-        self.logger.info("Stopping")
-        self.context.term()
+    def run(self):
+        # TCP dispatcher has no extra steps to add to the default loop.
+        # We will just exit this method.
+        pass
 
 #------------------------------------------------------------------------------
 
@@ -198,13 +207,13 @@ class SerialDispatcher(Dispatcher):
         self.receiving = False
         self.blob = ""
         
-        serial_config = configparser.ConfigParser()
-        serial_config.read('dispatcher.conf')
-        serial_dispatcher_section = ('serial-dispatcher-{0}-{1}'
+        config = configparser.ConfigParser()
+        config.read('dispatcher.conf')
+        dispatcher_section = ('dispatcher-{0}-{1}'
                                   .format(dispatcher_type, dispatcher_id))
 
-        if (serial_dispatcher_section) in serial_config.sections()):
-            entries = serial_config[serial_dispatcher_section]
+        if (dispatcher_section) in config.sections()):
+            entries = config[dispatcher_section]
             # path to the message class
             self.message_path = entries['MessagePath']
             if message_path is not None:
@@ -225,7 +234,8 @@ class SerialDispatcher(Dispatcher):
             self.message_forward_port = entries['MessageForwardPort']
                         
         else:
-            self.logger.critical('no valid tcp section found in config file')
+            self.logger.critical('no valid serial section '
+                                 'found in config file')
 
     def create_sockets(self):
         """ Create the socket to the scenario player and set up the
@@ -286,11 +296,11 @@ class SerialDispatcher(Dispatcher):
     def process_message(self):
         """Receive and forward a message from the system.
         """
-        self.logger.info( 'Received a full message from the system' )
-        self.logger.info( ",".join( map( lambda x: hex(ord(x)), self.blob ) ) )
+        self.logger.info('Received a full message from the system')
+        self.logger.info(",".join(map(lambda x: hex(ord(x)), self.blob)))
         a_message = self.message.from_message( self.blob )
-        self.logger.info( 'Copying data to player' )
-        self.repeater_socket.send_pyobj( a_message )
+        self.logger.info('Copying data to player')
+        self.repeater_socket.send_pyobj(a_message)
 
         self.blob = ""
     
@@ -303,30 +313,8 @@ class SerialDispatcher(Dispatcher):
                          .format(type(command)))
         self.serial_link.write(self.message.to_message(command))
 
-    def run():
-        """Start the serial dispatcher and wait for termination.
-
-        This is an infinite loop that passes messages back and forth
-        between the system and the scenario player.
-        The messages are handled by call-back functions.
-        """
-        # Catch any Control-C
-        signal.signal( signal.SIGINT, self.control_c_handler )
-
-        self.create_sockets()
-
-        while self.go_on :
-            # Note that poller uses fileno() as the key for non-zmq sockets.
-            socks = dict( self.poller.poll( self.timeout ) ) # Timeout in ms
-            for socket_key in self.call_backs.copy() : 
-                    # Need a copy here cause we might modify the call_backs
-                    # while in the call back functions.
-                if socket_key in socks and socks[ socket_key ] == zmq.POLLIN:
-                    cbp = self.call_backs[ socket_key ]
-                    function = cbp[1]
-                    function( cbp[0] )
-
-            if len( socks ) == 0 and self.receiving :
+    def run(self, socks):
+        if len(socks) == 0 and self.receiving :
                 # We were in the process of receiving data from OBIS.
                 # We did not receive any new bytes, so we assume it's
                 # the end of the message.
@@ -337,25 +325,75 @@ class SerialDispatcher(Dispatcher):
                 # cycles.
                 self.timeout = default_timeout
                 self.blob = "" # Reset the message buffer
-            elif len( socks ) == 0 and self.timeout == default_timeout :
-                self.logger.info( "Nothing happened for a long time." )
-            else :
-                pass
+        elif len(socks) == 0 and self.timeout == default_timeout :
+                self.logger.info("Nothing happened for a long time.")
+        else:
+            pass
 
-        self.logger.info( 'Stopping' )
+        self.logger.info('Stopping')
         self.context.term()
 
+#------------------------------------------------------------------------------
+
 class UDPDispatcher(Dispatcher):
-    def __init__(self):
-        Dispatcher.__init__(self)
+    def __init__(self, dispatcher_type, dispatcher_id):
+        Dispatcher.__init__(self, dispatcher_type, dispatcher_id)
+        
+        config = configparser.ConfigParser()
+        config.read('dispatcher.conf')
+        dispatcher_section = ('dispatcher-{0}-{1}'
+                                  .format(dispatcher_type, dispatcher_id))
 
-    def forward():
-        pass
-    
-    def accept():
+        if (dispatcher_section) in config.sections()):
+            entries = config[dispatcher_section]
+            # path to the message class
+            self.message_path = entries['MessagePath']
+            if message_path is not None:
+                loader = importlib.machinery.SourceFileLoader('message',
+                                                              message_path)
+                message_module = loader.exec_module('message')
+                message = message_module.Message()
+            # address and port to listen on for messages from the system
+            self.accept_address = entries['AcceptAddress']
+            self.listen_port = entries['ListenPort']
+            
+            # Is the dispatcher supposed to forward to another system
+            # instead of to the scenario player.
+            self.forwarder = (entries['Forwarder'].lower() in ['true', '1',
+                                                               'yes'])
+            # check to see if messages should be forwarded to another 
+            # system
+            if forwarder:
+                self.second_accept_address = entries['SecondAcceptAddress']
+            else:
+                # port to listen on for commands from the player.
+                self.command_listen_port = entries['CommandListenPort']
+                # port to forward messages to the player.
+                self.message_forward_port = entries['MessageForwardPort']
+                        
+        else:
+            self.logger.critical('no valid udp section found in config file')
+
+    def create_sockets(self):
+        """ Create the UDP sockets between the system and the 
+            Scenario player
+        """
+        self.logger.info('Creating sockets for {0} {1}'
+                         .format(self.name, self.dispatcher_id))
+        # Open an UDP socket to listen for new connections 
+        # from the system.
+        self.logger.info("Listening on address {0}"
+                         .format(str(self.accept_address)))
+        self.logger.info("Listening on port {0}".format(str(self.listen_port)))
+        address = "udp://{0}:{1}".format(accept_address, listen_port)
+        accept_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        accept_socket.bind((self.accept_address, self.listen_port))
+        # Let the superclass finish the creation of the rest of the 
+        # sockets, because it is the same.
+        Dispatcher.create_sockets(self)
+
+    def run(self):
         pass
 
-    def run():
-        pass
 
 

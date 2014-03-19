@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 """OTIS focon_simulator.
 
 Usage
@@ -8,7 +7,7 @@ Usage
     id      :== <0|1>
 
 Initializes and starts the a simulator.
-Writes all logging data to /tmp/focon_simulator_<id>.log
+Writes all logging data to /tmp/type_simulator_<id>.log
 
 """
 import sys
