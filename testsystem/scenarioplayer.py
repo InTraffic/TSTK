@@ -214,7 +214,7 @@ class ScenarioPlayer(object):
         self.logger.info( "adding socket " + str( a_socket ) )
         self.poller.register( a_socket, zmq.POLLIN )
         # This is needed because poller.poll returns
-        # a list with filenumbers for normal sockets and
+        # a list with filenumbers for normal sockets andl
         # references to zmq sockets.
         try:
             self.call_backs[ a_socket.fileno() ] = ( 

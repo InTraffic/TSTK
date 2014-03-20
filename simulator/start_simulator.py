@@ -1,4 +1,4 @@
-"""OTIS focon_simulator.
+"""Simulator starter.
 
 Usage
     ./start_simulator <command>  <id>
@@ -12,7 +12,6 @@ Writes all logging data to /tmp/type_simulator_<id>.log
 """
 import sys
 
-import daemon
 import connectionfactory
 
 if __name__ == "__main__":

@@ -17,8 +17,6 @@ from soap_notification import SoapNotification
 import otis_version
 #-----------------------------------------------------------
 
-PYTHON3_PATH = 'bin/python3'
-PYTHON2_PATH = 'bin/python2' 
 '''
 
 class TestCase_Exception(Exception):
