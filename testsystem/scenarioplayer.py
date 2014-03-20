@@ -30,21 +30,19 @@ class ScenarioPlayer(object):
       when data arrives at a particular socket. (TODO REMOVE)
     * priority_queue -- queue for the test steps,
     * runit -- flag to indicate a scenario should be run or stopped,
-    * event_store -- the event store,
     * test_case -- test case this scenario is part of,
     * poller -- zmq poller to poll all registered sockets,
     * context -- zmq context.
 
     """
-    def __init__( self, event_store, test_case, system_name ):
+    def __init__( self, test_case, system_name ):
         self.priority_queue = PriorityQueue()
         self._start_time = None
         self.runit = 1
         self.call_backs  = {}
-        self.event_store = event_store
-        self.logger      = logging.getLogger( 'ScenarioPlayer' )
+        self.logger      = logging.getLogger('ScenarioPlayer')
         self.test_case   = test_case
-        self.old = signal.signal( signal.SIGINT, self.control_c_handler )
+        self.old = signal.signal(signal.SIGINT, self.control_c_handler)
 
         self.context = zmq.Context(1)
         self.poller  = zmq.Poller()
@@ -53,28 +51,30 @@ class ScenarioPlayer(object):
     # The unused parameters are signal and frame.
     # these are not needed for a controlled stop.
     # pylint: disable=W0613
-    def control_c_handler( self, unused1, unused2 ):
+    def control_c_handler(self, unused1, unused2):
         """Handler for control C
 
         Stops the scenario and logs the event.
         """
         # Log that we were stopped by a control C
-        self.logger.info( "User requested a scenario stop via CTRL-C " )
+        self.logger.info("User requested a scenario stop via CTRL-C ")
         # try a controlled stop....
         self.stop()
 
 
-    def add_step( self, when, step, show, question ):
+    def add_step( self, when, step):
         """Add the given step to the list of scenario steps.
-
-        The parameter ``step`` is a reference to a function that takes a
-        single parameter, a reference to the scenario player.
-
-        ``when`` tells when it is to be executed.
+        :param when: tells when it is to be executed.
         The steps in scenario are executed approximately at the time specified
         If the time interval between two steps is large
         (1 s or more) it will be a close approximation.  If the time interval
         is small (<0.1) the execution can be slightly delayed. 
+        :type when: int, float, string
+        :param step: a reference to a function that takes a
+        single parameter, a reference to the scenario player.
+        :type step: function
+
+        ``when``  
 
         If ``when`` is a number, it is interpreted
         as being a number of seconds.
@@ -96,9 +96,9 @@ class ScenarioPlayer(object):
           indicates the number of seconds from when the method is called.
 
         """
-        if not isinstance( when, int):
-            if not isinstance( when, float ):
-                when = parse_timespec( when )
+        if not isinstance(when, int):
+            if not isinstance(when, float):
+                when = parse_timespec(when)
 
         if not self._start_time is None:
             # Scenario is running. Need to add an offset to the delta_time
@@ -107,37 +107,34 @@ class ScenarioPlayer(object):
             offset = current_time - self._start_time
             when = when + offset
 
-        self.priority_queue.put( ( when, step, show, question ) )
+        self.priority_queue.put((when, step, show, question))
 
 
-    def execute_step( self, step, show, question ) :
+    def execute_step(self, step) :
         """
         Execute the given step and log this.
-
-        The parameter `show` indicates whether this step should be shown in
-        the OTIS Viewer.  The question, if any, will be presented to the user
-        in OTIS Viewer.
+        
+        :param step:a reference to a function that takes a
+        single parameter, a reference to the scenario player.
+        :type step: function 
         """
-        argspec = getargspec( step )
+        argspec = getargspec(step)
         # Execute the step
         # Does the step require a parameter?
-        if len( argspec.args ) > 0 and argspec.args[ 0 ] == 'self' :
-            if len( argspec.args ) == 2 :
-                step( self.test_case )
+        if len(argspec.args) > 0 and argspec.args[0] == 'self' :
+            if len(argspec.args) == 2 :
+                step(self.test_case)
             else :
                 step()
         else:
-            if len( argspec.args ) == 1 :
-                step( self.test_case )
+            if len(argspec.args) == 1 :
+                step(self.test_case)
             else :
                 step()
-        self.logger.info( "executing " + str( step ) )
-        # This takes about 0.1 second, so we do it last.
-        if show :
-            self.event_store.store_test_step( step, question )
+        self.logger.info("executing " + str(step))
 
 
-    def play( self ):
+    def play(self):
         """
         Play the current scenario.
 
@@ -146,57 +143,47 @@ class ScenarioPlayer(object):
         """
         self.runit = 1
         self._start_time = time.time()
-        self.logger.info( "starting scenario" )
+        self.logger.info("starting scenario")
         last_commit_time = time.time()
         while (not self.priority_queue.empty()) and (self.runit):
             # Next step in the scenario
-            ( delta_time, step, show, question ) = self.priority_queue.get()
+            (delta_time, step, show, question) = self.priority_queue.get()
 
             current_time = time.time()
             # When should the step fire?
             expected_time = self._start_time + delta_time
             # print expected_time, current_time
-            if ( current_time >= expected_time ):
-                self.execute_step( step, show, question )
+            if (current_time >= expected_time):
+                self.execute_step(step, show, question)
             else:
                 # This results in a dictionary that contains
                 # as a key the fileno to normal sockets, or
                 # the reference to a zmq socket.
                 # The value is the status  (zmq.POLLIN)
-                socks = dict( self.poller.poll( 
-                    1000*(expected_time - current_time ) ) )
+                socks = dict(self.poller.poll( 
+                    1000*(expected_time - current_time)))
                 # Enough time has passed?
                 current_time = time.time()
-                if ( current_time >= expected_time ):
-                    self.execute_step( step, show, question )
+                if (current_time >= expected_time):
+                    self.execute_step(step, show, question)
                 else:
                     # Put the step back in the queue, because handling of the
                     # filehandle event might add new events that come before
                     # this event.
                     delta_time = expected_time - current_time
-                    self.add_step( delta_time, step, show, question )
+                    self.add_step(delta_time, step, show, question)
                     # Handle the filehandle events
                     for socket_key in self.call_backs.copy() : 
                             # Need copy here cause we might modify the 
                             # call_backs while in the call back functions.
                         if socket_key in socks and ( 
-                                socks[ socket_key ] == zmq.POLLIN ) :
-                            callb = self.call_backs[ socket_key ]
+                                socks[socket_key] == zmq.POLLIN) :
+                            callb = self.call_backs[socket_key]
                             function = callb[1]
-                            function( callb[0], self )
-            if current_time - last_commit_time > 1 :
-                self.event_store.commit()
-                last_commit_time = current_time
+                            function(callb[0], self)
 
-        self.event_store.commit()
 
-    def wait_for_answers( self ):
-        """Wait until all test steps with questions are answered"""
-        if self.event_store.are_there_unanswered_questions() :
-            self.add_step( 10, self.wait_for_answers, 
-                           show=False, question=None )
-
-    def stop( self ):
+    def stop(self):
         """Stop the current scenario.
 
         Once stopped a scenario cannot be resumed.
@@ -204,33 +191,41 @@ class ScenarioPlayer(object):
         self.runit = 0
 
 
-    def add_socket( self, a_socket, call_back_function ):
+    def add_socket(self, a_socket, call_back_function):
         """Add the given socket to the list of sockets to be watched.
+
+        :param a_socket: Socket to add
+        :type a_socket: socket or zmq socket
+        :param call_back_function: function to register in call_backs
+        :type call_back_function: function
 
         If data arrives on the socket, the given call back function is
         called with as parameters the socket and a reference to the 
         scenario player.
         """
-        self.logger.info( "adding socket " + str( a_socket ) )
-        self.poller.register( a_socket, zmq.POLLIN )
+        self.logger.info("adding socket " + str(a_socket))
+        self.poller.register(a_socket, zmq.POLLIN)
         # This is needed because poller.poll returns
         # a list with filenumbers for normal sockets andl
         # references to zmq sockets.
         try:
-            self.call_backs[ a_socket.fileno() ] = ( 
-                    a_socket, call_back_function )
+            self.call_backs[a_socket.fileno()] = ( 
+                    a_socket, call_back_function)
         except AttributeError:
-            # This handels zmq sockets.
-            self.call_backs[ a_socket ] = ( 
-                    a_socket, call_back_function )
+            # This handles zmq sockets.
+            self.call_backs[a_socket] = ( 
+                    a_socket, call_back_function)
 
-    def remove_socket( self, a_socket ):
+    def remove_socket(self, a_socket):
         """Remove the given socket from the lost of socket to be watched.
+        
+        :param a_socket: Socket to add
+        :type a_socket: socket or zmq socket
         """
-        self.logger.info( "removing socket " + str( a_socket ) )
-        self.poller.unregister( a_socket )
+        self.logger.info("removing socket " + str(a_socket))
+        self.poller.unregister(a_socket)
         try:
-            del self.call_backs[ a_socket.fileno() ]
+            del self.call_backs[a_socket.fileno()]
         except AttributeError:
-            del self.call_backs[ a_socket ]
+            del self.call_backs[a_socket]
 
