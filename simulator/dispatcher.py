@@ -407,7 +407,7 @@ class HttpDispatcher(Dispatcher):
             self.message_forward_port = entries['MessageForwardPort']
                         
         else:
-            self.logger.critical('no valid udp section found in config file')
+            self.logger.critical('no valid http section found in config file')
 
     def create_sockets(self):
         """ Create the UDP sockets between the system and the 
