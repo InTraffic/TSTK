@@ -6,15 +6,15 @@ import os
 import version
 import logging
 
-class TISDaemon( Daemon ):
+class TISDaemon(Daemon):
 
     """OTIS version of Daemon class
     Contains the default parameter handling and logging handling.
     """
-    def __init__( self,dispatcher, name, daemon_id ):
-        errorlogfile = ('/%s_%s.err' % ( name, daemon_id ) )
-        pidfile      = '/tmp/%s_%s.pid' % ( name, daemon_id )
-        Daemon.__init__( self, pidfile, stderr=errorlogfile )
+    def __init__(self, dispatcher, name, daemon_id):
+        errorlogfile = '/{0}_{1}.err'.format(name, daemon_id)
+        pidfile = '/tmp/{0}_{1}.pid'.format(name, daemon_id)
+        Daemon.__init__(self, pidfile, stderr=errorlogfile)
         self.dispatcher = dispatcher
         self.name = name
         self.daemon_id = daemon_id
@@ -22,18 +22,18 @@ class TISDaemon( Daemon ):
 
     def setup_logging( self ):
         """Setup the default logging based on the name of this daemon"""
-        self.logger = logging.getLogger( self.name )
-        self.logger.setLevel( logging.INFO )
-        logfile = ('/%s_%s.log' % ( self.name, self.daemon_id ) )
-        filehandler = logging.FileHandler( logfile )
-        filehandler.setLevel( logging.INFO )
+        self.logger = logging.getLogger(self.name)
+        self.logger.setLevel(logging.INFO)
+        logfile = ('/{0}_{1}.log'.format(self.name, self.daemon_id))
+        filehandler = logging.FileHandler(logfile)
+        filehandler.setLevel(logging.INFO)
         formatter = logging.Formatter(
                 '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        filehandler.setFormatter( formatter )
-        self.logger.addHandler( filehandler )
+        filehandler.setFormatter(formatter)
+        self.logger.addHandler(filehandler)
 
 
-    def startup( self ):
+    def startup(self):
         """Default parameter handling to start or stop the daemon"""
         if 'start' == sys.argv[1]:
             self.start()
@@ -53,10 +53,11 @@ class TISDaemon( Daemon ):
 
 
 class TCPDaemon(TISDaemon):
-    """Class to turn TCP simulator into a server that runs in the background.
+    """Class to turn TCP simulator into a server that runs in the
+    background.
     """
-    def __init__(self, name, daemon_id ):
-        TISDaemon.__init__( self, name, daemon_id )
+    def __init__(self, daemon, name, daemon_id):
+        TISDaemon.__init__(self, daemon, name, daemon_id)
 
     def run(self):
         """Start the dispatcher
@@ -66,13 +67,14 @@ class TCPDaemon(TISDaemon):
         # Start simulator
         self.logger.info('Starting TCP simulator')
         # All the actual work is done by the dispatcher.
-        self.dispatcher.run( self.daemon_id )
+        self.dispatcher.run(self.daemon_id)
 
 class SerialDaemon(TISDaemon):
-    """Class to turn Serial simulator into a server that runs in the background.
+    """Class to turn Serial simulator into a server that runs in the
+    background.
     """
-    def __init__(self, name, daemon_id ):
-        TISDaemon.__init__( self, name, daemon_id )
+    def __init__(self, daemon, name, daemon_id):
+        TISDaemon.__init__(self, daemon, name, daemon_id)
 
     def run(self):
         """Start the dispatcher
@@ -82,13 +84,14 @@ class SerialDaemon(TISDaemon):
         # Start simulator
         self.logger.info('Starting Serial simulator')
         # All the actual work is done by the dispatcher.
-        self.dispatcher.run( self.daemon_id )
+        self.dispatcher.run(self.daemon_id)
 
 class UDPDaemon(TISDaemon):
-    """Class to turn UDP simulator into a server that runs in the background.
+    """Class to turn UDP simulator into a server that runs in the
+    background.
     """
-    def __init__(self, name, daemon_id ):
-        TISDaemon.__init__( self, name, daemon_id )
+    def __init__(self, daemon, name, daemon_id):
+        TISDaemon.__init__(self, daemon, name, daemon_id)
 
     def run(self):
         """Start the dispatcher
@@ -98,6 +101,45 @@ class UDPDaemon(TISDaemon):
         # Start simulator
         self.logger.info('Starting UDP simulator')
         # All the actual work is done by the dispatcher.
-        self.dispatcher.run( self.daemon_id )
+        self.dispatcher.run(self.daemon_id)
+
+class SoapDaemon(TISDaemon):
+    """Class to turn Soap simulator into a server that runs in the
+    background.
+    """
+    def __init__(self, daemon, name, daemon_id):
+        TISDaemon.__init__(self, daemon, name, daemon_id)
+
+    def run(self):
+        """Start the dispatcher
+        """
+        # If we run, we want logging...
+        self.setup_logging()
+        # Start simulator
+        self.logger.info('Starting Soap simulator')
+        # All the actual work is done by the dispatcher.
+        self.dispatcher.run(self.daemon_id)
+
+class HttpDaemon(TISDaemon):
+    """Class to turn Http simulator into a server that runs in the
+    background.
+    """
+    def __init__(self, daemon, name, daemon_id):
+        TISDaemon.__init__(self, daemon, name, daemon_id)
+
+    def run(self):
+        """Start the dispatcher
+        """
+        # If we run, we want logging...
+        self.setup_logging()
+        # Start simulator
+        self.logger.info('Starting Http simulator')
+        # All the actual work is done by the dispatcher.
+        self.dispatcher.run(self.daemon_id)
+
+
+
+
+
 
 

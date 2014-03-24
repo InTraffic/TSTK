@@ -12,7 +12,6 @@ class Dispatcher(object):
         self.name = name
         self.dispatcher_id = dispatcher_id
         self.call_backs = {}
-        self.forwarder = False
         self.go_on = True
 
         logger = logging.getLogger('{0}_simulator'
@@ -34,7 +33,7 @@ class Dispatcher(object):
         self.go_on = False
         return False
 
-    def create_sockets(self):
+    def create_sockets(self, accept_socket):
         # Open a socket to listen for commands from the scenario player
         address = "tcp://*:{0}".format(self.command_listen_port)
         self.logger.info( "Command subscription at {0}".format(address)
@@ -91,7 +90,7 @@ class Dispatcher(object):
             a_socket.close()
             self.system_socket = None
         else :
-            a_message = message.from_message(blob = data)
+            a_message = message.from_message(data)
             self.logger.info('Copying data to player')
             self.repeater_socket.send_pyobj(a_message)
     
@@ -107,7 +106,7 @@ class Dispatcher(object):
                     # Need copy here cause we might modify the call_backs
                     # while in the call back functions.
                 if socket_key in socks and socks[socket_key] == zmq.POLLIN:
-                    if socket_key in self.call_backs: #TODO The forwarder stuff could fit here as extra if statement.
+                    if socket_key in self.call_backs: 
                         cbp = self.call_backs[socket_key]
                         function =  cbp[1]
                         function(cbp[0])
@@ -124,7 +123,7 @@ class TCPDispatcher(Dispatcher):
         Dispatcher.__init__(self, name, dispatcher_id)
         
         config = configparser.ConfigParser()
-        config.read('dispatcher.conf')
+        config.read('simulator.conf')
         dispatcher_section = ('dispatcher-{0}-{1}'
                                   .format(dispatcher_type, dispatcher_id))
 
@@ -141,19 +140,10 @@ class TCPDispatcher(Dispatcher):
             self.accept_address = entries['AcceptAddress']
             self.listen_port = entries['ListenPort']
             
-            # Is the dispatcher supposed to forward to another system
-            # instead of to the scenario player.
-            self.forwarder = (entries['Forwarder'].lower() in ['true', '1',
-                                                               'yes'])
-            # check to see if messages should be forwarded to another 
-            # system
-            if forwarder:
-                self.second_accept_address = entries['SecondAcceptAddress']
-            else:
-                # port to listen on for commands from the player.
-                self.command_listen_port = entries['CommandListenPort']
-                # port to forward messages to the player.
-                self.message_forward_port = entries['MessageForwardPort']
+            # port to listen on for commands from the player.
+            self.command_listen_port = entries['CommandListenPort']
+            # port to forward messages to the player.
+            self.message_forward_port = entries['MessageForwardPort']
                         
         else:
             self.logger.critical('no valid tcp section found in config file')
@@ -176,7 +166,7 @@ class TCPDispatcher(Dispatcher):
 
         # Let the superclass finish the creation of the rest of the 
         # sockets, because it is the same.
-        Dispatcher.create_sockets(self)
+        Dispatcher.create_sockets(self, accept_socket)
 
     def run(self):
         # TCP dispatcher has no extra steps to add to the default loop.
@@ -208,7 +198,7 @@ class SerialDispatcher(Dispatcher):
         self.blob = ""
         
         config = configparser.ConfigParser()
-        config.read('dispatcher.conf')
+        config.read('simulator.conf')
         dispatcher_section = ('dispatcher-{0}-{1}'
                                   .format(dispatcher_type, dispatcher_id))
 
@@ -340,7 +330,7 @@ class UDPDispatcher(Dispatcher):
         Dispatcher.__init__(self, dispatcher_type, dispatcher_id)
         
         config = configparser.ConfigParser()
-        config.read('dispatcher.conf')
+        config.read('simulator.conf')
         dispatcher_section = ('dispatcher-{0}-{1}'
                                   .format(dispatcher_type, dispatcher_id))
 
@@ -357,19 +347,10 @@ class UDPDispatcher(Dispatcher):
             self.accept_address = entries['AcceptAddress']
             self.listen_port = entries['ListenPort']
             
-            # Is the dispatcher supposed to forward to another system
-            # instead of to the scenario player.
-            self.forwarder = (entries['Forwarder'].lower() in ['true', '1',
-                                                               'yes'])
-            # check to see if messages should be forwarded to another 
-            # system
-            if forwarder:
-                self.second_accept_address = entries['SecondAcceptAddress']
-            else:
-                # port to listen on for commands from the player.
-                self.command_listen_port = entries['CommandListenPort']
-                # port to forward messages to the player.
-                self.message_forward_port = entries['MessageForwardPort']
+            # port to listen on for commands from the player.
+            self.command_listen_port = entries['CommandListenPort']
+            # port to forward messages to the player.
+            self.message_forward_port = entries['MessageForwardPort']
                         
         else:
             self.logger.critical('no valid udp section found in config file')
@@ -390,10 +371,97 @@ class UDPDispatcher(Dispatcher):
         accept_socket.bind((self.accept_address, self.listen_port))
         # Let the superclass finish the creation of the rest of the 
         # sockets, because it is the same.
-        Dispatcher.create_sockets(self)
+        Dispatcher.create_sockets(self, accept_socket)
 
     def run(self):
         pass
+
+
+#------------------------------------------------------------------------------
+
+class HttpDispatcher(Dispatcher):
+    def __init__(self, dispatcher_type, dispatcher_id):
+        Dispatcher.__init__(self, dispatcher_type, dispatcher_id)
+        
+        config = configparser.ConfigParser()
+        config.read('simulator.conf')
+        dispatcher_section = ('dispatcher-{0}-{1}'
+                                  .format(dispatcher_type, dispatcher_id))
+
+        if (dispatcher_section) in config.sections()):
+            entries = config[dispatcher_section]
+            # path to the message class
+            self.message_path = entries['MessagePath']
+            if message_path is not None:
+                loader = importlib.machinery.SourceFileLoader('message',
+                                                              message_path)
+                message_module = loader.exec_module('message')
+                message = message_module.Message()
+            # address and port to listen on for messages from the system
+            self.accept_address = entries['AcceptAddress']
+            self.listen_port = entries['ListenPort']
+            
+            # port to listen on for commands from the player.
+            self.command_listen_port = entries['CommandListenPort']
+            # port to forward messages to the player.
+            self.message_forward_port = entries['MessageForwardPort']
+                        
+        else:
+            self.logger.critical('no valid udp section found in config file')
+
+    def create_sockets(self):
+        """ Create the UDP sockets between the system and the 
+            Scenario player
+        """
+        self.logger.info('Creating sockets for {0} {1}'
+                         .format(self.name, self.dispatcher_id))
+        # Open an UDP socket to listen for new connections 
+        # from the system.
+        self.logger.info("Listening on address {0}"
+                         .format(str(self.accept_address)))
+        self.logger.info("Listening on port {0}".format(str(self.listen_port)))
+        address = "{0}:{1}".format(accept_address, listen_port)
+        accept_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        accept_socket.bind((self.accept_address, self.listen_port))
+        # Let the superclass finish the creation of the rest of the 
+        # sockets, because it is the same.
+        Dispatcher.create_sockets(self, accept_socket)
+
+    def process_messsage(self, a_socket):
+        """ Method to process a HTTP request from the system.
+        :param a_socket: the socket on which the message arrives.
+        :type a_socket: socket
+        """
+        self.logger.info('HTTP Request')
+        if self.http_request == None:
+            self.http_request = Message()
+
+        self.logger.info('Parsing request')
+        if self.http_request.from_message(a_socket):
+            self.logger.info('Waiting for more data')
+        else:
+            # We received the full request.
+            # Send a reply and close the connection.
+            a_socket.send( "HTTP/1.1 200 OK\n" )
+            self.logger.info('Complete request received.')
+            self.poller.unregister(a_socket)
+            del self.call_backs[ a_socket.fileno() ]
+            a_socket.close()
+            self.client_socket = None
+            self.logger.info('Forwarding request to player')
+            self.forward_socket.send_pyobj(self.http_request)
+            self.http_request = None
+
+    def run(self):
+        # Clean-up
+        if self.forward_socket is not None:
+            self.forward_socket.close()
+        if self.command_socket is not None:
+            self.command_socket.close()
+        if self.accept_socket is not None:
+            self.accept_socket.close()
+        if self.client_socket is not None:
+            self.client_socket.close()
 
 
 
