@@ -1,3 +1,6 @@
+import sys
+import connectionfactory
+
 """Simulator starter.
 
 Usage
@@ -8,12 +11,7 @@ Usage
 
 Initializes and starts the a simulator.
 Writes all logging data to /tmp/type_simulator_<id>.log
-
 """
-import sys
-
-import connectionfactory
-
 if __name__ == "__main__":
     if len(sys.argv) == 4:
         # Retrieve a factory for the specified type of simulator.

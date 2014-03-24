@@ -1,32 +1,31 @@
 import logging
 
 from scenarioplayer import ScenarioPlayer
-from testcase import TestCase
 from simulatorinterface import SimulatorInterface
-from driver import driver as drivers
+#from driver import driver as drivers
 
 import zmq
 
 class TestSystem(object):
     """ Starting point when creating a test system for a specific
     system. 
-    
-    Attributes:
-        context: This will be the zmq context.
-        test_case: The testcase associated with this testsystem.
-        scenario_player: The scenario player which will play the steps.
-        simulator_interfaces: The simulator_interfaces used by this 
-                              test system.
-        drivers: The drivers used by the testsystem.
-        logger: The logger.
 
     Use this class by creating a subclass, so you can also add your own
     simulator interfaces.
     """
+    #: This will be the zmq context.
     context = None
+
+    #: The scenario player which will play the steps.
     scenario_player = None
+
+    #: The simulator_interfaces used by this test system.
     simulator_interfaces = {}
+
+    #: The drivers used by the testsystem.
     drivers = {}
+
+    #: The logger.
     logger = None
 
     def __init__(self, test_system_name):
@@ -68,13 +67,13 @@ class TestSystem(object):
                     subp = subprocess.Popen(['kill', '-9', pid.rstrip()])
                     subp.communicate()
                     if subp.returncode != 0 :
-                        print "Can't kill previous test script"
-                        exit( 1 )
+                        print("Can't kill previous test script")
+                        exit(1)
                 # Give it some time
                 time.sleep(1)
         # Now open a file and keep it open, so the next
         # script can kill us.
-        self.lock = open( lock_name, 'w' )
+        self.lock = open(lock_name, 'w')
 
     def add_scenario_player(self):
         """ Set the scenario player for the testsystem
@@ -96,7 +95,7 @@ class TestSystem(object):
         :type sim_interface: string
         """
         simulator_interface = SimulatorInterface(sim_interface)
-        self.simulator_interfaces.append(name:simulator_interface)
+        self.simulator_interfaces.update({name:simulator_interface})
         self.scenario_player.add_socket(simulator_interface.message_link, 
                                         simulator_interface.on_message)
 
@@ -112,7 +111,7 @@ class TestSystem(object):
         :type driver: string
         """
         a_driver = drivers.get_driver(driver, driver_id)
-        self.drivers.append(name:a_driver)
+        self.drivers.update({name:a_driver})
         
     def play(self):
         """ See :func:`ScenarioPlayer.play` """

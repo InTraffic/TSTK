@@ -8,6 +8,9 @@ import serial
 import zmq
 
 class Dispatcher(object):
+    """ Superclass for all Dispatchers.
+    This is the part of the simulator that handles the connections.
+    """
     def __init__(self, dispatcher_type, dispatcher_id):
         self.name = name
         self.dispatcher_id = dispatcher_id
@@ -36,7 +39,7 @@ class Dispatcher(object):
     def create_sockets(self, accept_socket):
         # Open a socket to listen for commands from the scenario player
         address = "tcp://*:{0}".format(self.command_listen_port)
-        self.logger.info( "Command subscription at {0}".format(address)
+        self.logger.info("Command subscription at {0}".format(address))
         command_socket  = self.context.socket(zmq.SUB)
         command_socket.bind(address)
         command_socket.setsockopt(zmq.SUBSCRIBE, "")
@@ -119,6 +122,7 @@ class Dispatcher(object):
 #------------------------------------------------------------------------------
 
 class TCPDispatcher(Dispatcher):
+    """ Dispatcher subclass for TCP connections"""
     def __init__(self, dispatcher_type, dispatcher_id):
         Dispatcher.__init__(self, name, dispatcher_id)
         
@@ -127,7 +131,7 @@ class TCPDispatcher(Dispatcher):
         dispatcher_section = ('dispatcher-{0}-{1}'
                                   .format(dispatcher_type, dispatcher_id))
 
-        if (dispatcher_section) in config.sections()):
+        if (dispatcher_section) in config.sections():
             entries = config[dispatcher_section]
             # path to the message class
             self.message_path = entries['MessagePath']
@@ -177,6 +181,7 @@ class TCPDispatcher(Dispatcher):
 
 
 class SerialDispatcher(Dispatcher):
+    """ Dispatcher subclass for Serial connections"""
     SERIAL_PARITY = {'none':serial.PARITY_NONE , 'even':serial.PARITY_EVEN ,
                      'odd':serial.PARITY_ODD , 'mark':serial.PARITY_MARK , 
                      'space':serial.PARITY_SPACE}
@@ -202,7 +207,7 @@ class SerialDispatcher(Dispatcher):
         dispatcher_section = ('dispatcher-{0}-{1}'
                                   .format(dispatcher_type, dispatcher_id))
 
-        if (dispatcher_section) in config.sections()):
+        if (dispatcher_section) in config.sections():
             entries = config[dispatcher_section]
             # path to the message class
             self.message_path = entries['MessagePath']
@@ -241,7 +246,7 @@ class SerialDispatcher(Dispatcher):
         
         # Open a socket to listen for commands from the scenario player
         address = "tcp://*:{0}".format(self.command_listen_port)
-        self.logger.info( "Command subscription at {0}".format(address)
+        self.logger.info("Command subscription at {0}".format(address))
         command_socket  = self.context.socket(zmq.SUB)
         command_socket.bind(address)
         command_socket.setsockopt(zmq.SUBSCRIBE, "")
@@ -326,6 +331,7 @@ class SerialDispatcher(Dispatcher):
 #------------------------------------------------------------------------------
 
 class UDPDispatcher(Dispatcher):
+    """ Dispatcher subclass for UDP connections"""
     def __init__(self, dispatcher_type, dispatcher_id):
         Dispatcher.__init__(self, dispatcher_type, dispatcher_id)
         
@@ -334,7 +340,7 @@ class UDPDispatcher(Dispatcher):
         dispatcher_section = ('dispatcher-{0}-{1}'
                                   .format(dispatcher_type, dispatcher_id))
 
-        if (dispatcher_section) in config.sections()):
+        if (dispatcher_section) in config.sections():
             entries = config[dispatcher_section]
             # path to the message class
             self.message_path = entries['MessagePath']
@@ -380,6 +386,7 @@ class UDPDispatcher(Dispatcher):
 #------------------------------------------------------------------------------
 
 class HttpDispatcher(Dispatcher):
+    """ Dispatcher subclass for Http connections"""
     def __init__(self, dispatcher_type, dispatcher_id):
         Dispatcher.__init__(self, dispatcher_type, dispatcher_id)
         
@@ -388,7 +395,7 @@ class HttpDispatcher(Dispatcher):
         dispatcher_section = ('dispatcher-{0}-{1}'
                                   .format(dispatcher_type, dispatcher_id))
 
-        if (dispatcher_section) in config.sections()):
+        if (dispatcher_section) in config.sections():
             entries = config[dispatcher_section]
             # path to the message class
             self.message_path = entries['MessagePath']
@@ -429,6 +436,7 @@ class HttpDispatcher(Dispatcher):
 
     def process_messsage(self, a_socket):
         """ Method to process a HTTP request from the system.
+
         :param a_socket: the socket on which the message arrives.
         :type a_socket: socket
         """

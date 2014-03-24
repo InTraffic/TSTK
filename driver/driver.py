@@ -2,7 +2,7 @@
 """Classes and functions to get pages from a web portal.
 """
 import configparser
-import urllib2  # This does all the heavy lifting.
+import urllib  # This does all the heavy lifting.
 import logging
 
 
@@ -20,7 +20,7 @@ class Portal(object):
 
     def fetch(self):
         """Fetch the current version of the portal page"""
-        url_file = urllib2.urlopen(self.portal_url)
+        url_file = urllib.urlopen(self.portal_url)
         content = url_file.read()
         url_file.close()
         self.logger.info("fetched page " + content)
@@ -67,16 +67,22 @@ class Usbrly08b(object):
             self.serial = serial.Serial( device, 19200, parity='N',
                     stopbits=2, timeout=None, xonxoff=0, rtscts=0)
 
-    def open_relay( self, relay_number ):
-        """Open relay ``relay_number``
+    def open_relay(self, relay_number):
+        """Open relay 
+
+        :param relay_number: The number of the relay to open
+        :type relay_number: int
         """
         if not self.debug :
             command = 110
             command = command + relay_number
             self.serial.write( chr( command ) )
 
-    def close_relay( self, relay_number ):
-        """Close relay ``relay_number``
+    def close_relay(self, relay_number):
+        """Close relay 
+
+        :param relay_number: The number of the relay to close
+        :type relay_number: int
         """
         if not self.debug :
             command = 100
@@ -85,6 +91,13 @@ class Usbrly08b(object):
 #------------------------------------------------------------------------------
 
 def get_driver(name, driver_id):
+    """ function to get the desired driver object from this module.
+
+    :param name: name of the driver (eg. portal or usbrly08b)
+    :type name: string
+    :param driver_id: The id for the driver
+    :type driver_id: int
+    """
     drivers = {"portal":Portal, "usbrly08b":Usbrly08b} 
     a_driver = drivers.get(name)(driver_id)
     return a_driver

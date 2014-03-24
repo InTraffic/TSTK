@@ -11,7 +11,7 @@ import sys
 import os
 import zmq
 
-from Queue             import PriorityQueue
+from queue             import PriorityQueue
 from inspect           import getargspec
 #-----------------------------------------------------------
 
@@ -127,12 +127,12 @@ class ScenarioPlayer(object):
         # Does the step require a parameter?
         if len(argspec.args) > 0 and argspec.args[0] == 'self' :
             if len(argspec.args) == 2 :
-                step(self.test_case)
+                step(self.test_system)
             else :
                 step()
         else:
             if len(argspec.args) == 1 :
-                step(self.test_case)
+                step(self.test_system)
             else :
                 step()
         self.logger.info("executing " + str(step))

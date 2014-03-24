@@ -24,7 +24,7 @@ class UDPConnectionFactory(object):
 
     def get_daemon(self, dispatcher, name, connection_id):
         return daemon.UDPDaemon(get_dispatcher(name, simulator_id), name, 
-                                simulator_id))
+                                simulator_id)
     
     def get_dispatcher(self, name, simulator_id):
         return dispatcher.UDPDispatcher(name, simulator_id)
@@ -33,7 +33,7 @@ class SoapConnectionFactory(object):
 
     def get_daemon(self, dispatcher, name, connection_id):
         return daemon.SoapDaemon(get_dispatcher(name, simulator_id), name, 
-                                simulator_id))
+                                simulator_id)
     
     def get_dispatcher(self, name, simulator_id):
         return dispatcher.SoapDispatcher(name, simulator_id)
@@ -42,7 +42,7 @@ class HttpConnectionFactory(object):
 
     def get_daemon(self, dispatcher, name, connection_id):
         return daemon.HttpDaemon(get_dispatcher(name, simulator_id), name, 
-                                simulator_id))
+                                simulator_id)
     
     def get_dispatcher(self, name, simulator_id):
         return dispatcher.HttpDispatcher(name, simulator_id)
@@ -53,7 +53,7 @@ class ConnectionFactory(object):
     create and add a new connection to the testsystem.
     """
     
-    #: This dictionary contains all the known connection factories.
+    # This dictionary contains all the known connection factories.
     connection_types = {"TCP":TCPConnectionFactory(),
                         "UDP":UDPConnectionFactory(),
                         "Serial":SerialConnectionFactory(),

@@ -1,16 +1,13 @@
-"""Baseclass for all OTIS daemons"""
-
 from daemonbase import Daemon
 import sys
 import os
-import version
 import logging
 
 class TISDaemon(Daemon):
-
-    """OTIS version of Daemon class
-    Contains the default parameter handling and logging handling.
+    """Baseclass for all TIS daemons
+    Contains the default parameter and logging handling.
     """
+
     def __init__(self, dispatcher, name, daemon_id):
         errorlogfile = '/{0}_{1}.err'.format(name, daemon_id)
         pidfile = '/tmp/{0}_{1}.pid'.format(name, daemon_id)
@@ -46,9 +43,9 @@ class TISDaemon(Daemon):
         elif 'status' == sys.argv[1]:
             self.status()
         elif 'version' == sys.argv[1]:
-            print version.get_version()
+            pass
         else:
-            print "Unknown command"
+            print("Unknown command")
             sys.exit(2)
 
 
@@ -100,23 +97,6 @@ class UDPDaemon(TISDaemon):
         self.setup_logging()
         # Start simulator
         self.logger.info('Starting UDP simulator')
-        # All the actual work is done by the dispatcher.
-        self.dispatcher.run(self.daemon_id)
-
-class SoapDaemon(TISDaemon):
-    """Class to turn Soap simulator into a server that runs in the
-    background.
-    """
-    def __init__(self, daemon, name, daemon_id):
-        TISDaemon.__init__(self, daemon, name, daemon_id)
-
-    def run(self):
-        """Start the dispatcher
-        """
-        # If we run, we want logging...
-        self.setup_logging()
-        # Start simulator
-        self.logger.info('Starting Soap simulator')
         # All the actual work is done by the dispatcher.
         self.dispatcher.run(self.daemon_id)
 
