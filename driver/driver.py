@@ -1,7 +1,7 @@
 
 """Classes and functions to get pages from a web portal.
 """
-
+import configparser
 import urllib2  # This does all the heavy lifting.
 import logging
 
@@ -13,7 +13,7 @@ class Portal(object):
     def __init__(self, portal_id = None,):
         config = configparser.ConfigParser()
         config.read('driver.conf')
-        portal_section = ('driver-portal-{1}'.format(portal_id))
+        portal_section = ('driver-portal-{0}'.format(portal_id))
         self.portal_url = portal_section['portalUrl']
         self.logger     = logging.getLogger('portal-driver-{0}'
                                             .format(portal_id))
@@ -27,7 +27,6 @@ class Portal(object):
         return content
 
 #------------------------------------------------------------------------------
-import configparser
 import serial
 import os
 
