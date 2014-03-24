@@ -22,29 +22,28 @@ class ScenarioPlayerException(Exception):
 
 
 class ScenarioPlayer(object):
-    """Stores and executes test scenario's.
-
-    Attributes:
-
-    * call_backs -- array with information about which function to call
-      when data arrives at a particular socket. (TODO REMOVE)
-    * priority_queue -- queue for the test steps,
-    * runit -- flag to indicate a scenario should be run or stopped,
-    * test_case -- test case this scenario is part of,
-    * poller -- zmq poller to poll all registered sockets,
-    * context -- zmq context.
-
-    """
-    def __init__( self, test_case, system_name ):
+    """Stores and executes test scenario's"""
+    def __init__( self, test_system, system_name ):
+        #: queue for the test steps
         self.priority_queue = PriorityQueue()
         self._start_time = None
+
+        #: flag to indicate a scenario should be run or stopped
         self.runit = 1
+
+        #: array with information about which function to call
+        #: when data arrives at a particular socket.
         self.call_backs  = {}
         self.logger      = logging.getLogger('ScenarioPlayer')
-        self.test_case   = test_case
+
+        #: test system this scenario is part of
+        self.test_system   = test_system
         self.old = signal.signal(signal.SIGINT, self.control_c_handler)
 
+        #: zmq context
         self.context = zmq.Context(1)
+
+        #: zmq poller to poll all registered sockets
         self.poller  = zmq.Poller()
 
 
@@ -55,20 +54,24 @@ class ScenarioPlayer(object):
         """Handler for control C
 
         Stops the scenario and logs the event.
+
+        :param unused1: signal, but is not used.
+        :param unused2: frame, but s not used.
         """
         # Log that we were stopped by a control C
         self.logger.info("User requested a scenario stop via CTRL-C ")
-        # try a controlled stop....
+        # try a controlled stop
         self.stop()
 
 
     def add_step( self, when, step):
         """Add the given step to the list of scenario steps.
         :param when: tells when it is to be executed.
-        The steps in scenario are executed approximately at the time specified
-        If the time interval between two steps is large
-        (1 s or more) it will be a close approximation.  If the time interval
-        is small (<0.1) the execution can be slightly delayed. 
+
+        The steps in scenario are executed approximately at the time 
+        specified. If the time interval between two steps is large
+        (1 s or more) it will be a close approximation.  If the time 
+        interval is small (<0.1) the execution can be slightly delayed. 
         :type when: int, float, string
         :param step: a reference to a function that takes a
         single parameter, a reference to the scenario player.
@@ -79,7 +82,8 @@ class ScenarioPlayer(object):
         If ``when`` is a number, it is interpreted
         as being a number of seconds.
 
-        ``when`` can also be a string of the following format: "mm:ss.ss"
+        ``when`` can also be a string of the following format:
+        "mm:ss.ss"
 
         For instance:
 
@@ -87,13 +91,13 @@ class ScenarioPlayer(object):
         * "01:40"    means 1 minute 40 seconds
         * "00:00.5"  means 0.5 a second
 
-        Note that this method behaves differently according to when it is
-        called:
+        Note that this method behaves differently according to when it 
+        is called:
 
         * If it is called before the scenario is started, ``when``
           indicates offset from when the scenario is actually started.
         * If it is called after the scenario is started, ``when``
-          indicates the number of seconds from when the method is called.
+          indicates the number of seconds from when the method is called
 
         """
         if not isinstance(when, int):
@@ -101,8 +105,8 @@ class ScenarioPlayer(object):
                 when = parse_timespec(when)
 
         if not self._start_time is None:
-            # Scenario is running. Need to add an offset to the delta_time
-            # to keep the queue properly sorted.
+            # Scenario is running. Need to add an offset to the 
+            # delta_time to keep the queue properly sorted.
             current_time = time.time()
             offset = current_time - self._start_time
             when = when + offset
@@ -138,8 +142,9 @@ class ScenarioPlayer(object):
         """
         Play the current scenario.
 
-        Uses select() to wait for passing of time until the next step in the
-        scenario and for events on the registered sockets or other file handles.
+        Uses select() to wait for passing of time until the next step 
+        in the scenario and for events on the registered sockets or 
+        other file handles.
         """
         self.runit = 1
         self._start_time = time.time()
@@ -167,15 +172,16 @@ class ScenarioPlayer(object):
                 if (current_time >= expected_time):
                     self.execute_step(step, show, question)
                 else:
-                    # Put the step back in the queue, because handling of the
-                    # filehandle event might add new events that come before
-                    # this event.
+                    # Put the step back in the queue, because handling 
+                    # of the filehandle event might add new events that
+                    # come before this event.
                     delta_time = expected_time - current_time
                     self.add_step(delta_time, step, show, question)
                     # Handle the filehandle events
                     for socket_key in self.call_backs.copy() : 
-                            # Need copy here cause we might modify the 
-                            # call_backs while in the call back functions.
+                            # Need copy here cause we might modify 
+                            # the call_backs while in the call back
+                            # functions.
                         if socket_key in socks and ( 
                                 socks[socket_key] == zmq.POLLIN) :
                             callb = self.call_backs[socket_key]
@@ -217,7 +223,8 @@ class ScenarioPlayer(object):
                     a_socket, call_back_function)
 
     def remove_socket(self, a_socket):
-        """Remove the given socket from the lost of socket to be watched.
+        """Remove the given socket from the lost of socket to 
+        be watched.
         
         :param a_socket: Socket to add
         :type a_socket: socket or zmq socket

@@ -3,7 +3,7 @@ import logging
 from scenarioplayer import ScenarioPlayer
 from testcase import TestCase
 from simulatorinterface import SimulatorInterface
-from driver import Driver
+from driver import driver as drivers
 
 import zmq
 
@@ -29,9 +29,10 @@ class TestSystem(object):
     drivers = {}
     logger = None
 
-    def __init__(self):
+    def __init__(self, test_system_name):
         """
         """
+        self.kill_previous_script(test_system_name)
         #Setup logging.
         logger = logging.getLogger('Testsystem')
         logger.setLevel(logging.DEBUG)
@@ -99,7 +100,7 @@ class TestSystem(object):
         self.scenario_player.add_socket(simulator_interface.message_link, 
                                         simulator_interface.on_message)
 
-    def add_driver(self, name, driver):
+    def add_driver(self, name, driver, driver_id):
         """ Add a driver to the test system. The configuration of the
         driver is done with a configuration file. It wil add a driver 
         to the list with the name as key and the specific driver as 
@@ -110,8 +111,8 @@ class TestSystem(object):
         :param driver: The kind of driver.
         :type driver: string
         """
-        a_driver = Driver()
-        self.drivers.append(name:a_driver.get_driver(driver))
+        a_driver = drivers.get_driver(driver, driver_id)
+        self.drivers.append(name:a_driver)
         
     def play(self):
         """ See :func:`ScenarioPlayer.play` """
