@@ -1,5 +1,5 @@
 .. Test and Simulation Toolkit (TSTK) documentation master file, created by
-   sphinx-quickstart on Thu Mar 20 08:51:02 2014.
+   sphinx-quickstart on Mon Mar 24 11:29:48 2014.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
@@ -9,7 +9,15 @@ Welcome to Test and Simulation Toolkit (TSTK)'s documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 3
+    :numbered:
+
+    sum
+    driver
+    simulator
+    testsystem
+    Designs
+   
 
 
 
