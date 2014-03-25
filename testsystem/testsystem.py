@@ -84,13 +84,15 @@ class TestSystem(object):
         """ See :func:`ScenarioPlayer.add_step` """
         self.scenario_player.add_step(when, step)
 
-    def add_simulator_interface(self, name, sim_interface):
+    def add_simulator_interface(self, name, sim_id, sim_interface):
         """Add a new simulator interface to the list of 
         simulator_interfaces and also add a socket to the scenario
         player.
         
         :param name: The simulator name.
         :type name: string
+        :param sim_id: The id for the simulator interface.
+        :type sim_id: int
         :param sim_interface: The kind of simulator interface.
         :type sim_interface: string
         """

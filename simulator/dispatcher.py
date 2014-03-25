@@ -4,6 +4,7 @@ import socket
 import configparser
 import importlib.machinery
 import serial
+import copy
 
 import zmq
 
