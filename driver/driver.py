@@ -1,30 +1,39 @@
-
-"""Classes and functions to get pages from a web portal.
-"""
-import configparser
 import urllib  # This does all the heavy lifting.
 import logging
 
 
 class Portal(object):
-    """Interface to a Webportal
+    """Interface to a web portal
+    
     """
 
     def __init__(self, portal_id = None,):
-        config = configparser.ConfigParser()
-        config.read('driver.conf')
-        portal_section = ('driver-portal-{0}'.format(portal_id))
-        self.portal_url = portal_section['portalUrl']
         self.logger     = logging.getLogger('portal-driver-{0}'
                                             .format(portal_id))
+        self.portal_url = None
 
-    def fetch(self):
-        """Fetch the current version of the portal page"""
-        url_file = urllib.urlopen(self.portal_url)
-        content = url_file.read()
-        url_file.close()
-        self.logger.info("fetched page " + content)
-        return content
+    def fetch(self, portal_url=None):
+        """Fetch the current version of the web portal.
+
+        :param portal_url: the url to fetch, this url will be remembered
+                           untill the next call with a portal_url 
+                           specified.
+        :type portal_url: string
+        :returns: The fetched web portal if an url is known or specified
+        :returns: 1 if no url is known or specified
+
+        """
+        if portal_url is not None:
+            self.portal_url = portal_url
+        elif self.portal_url is not None:
+            url_file = urllib.urlopen(self.portal_url)
+            content = url_file.read()
+            url_file.close()
+            self.logger.info("fetched page " + content)
+            return content
+        else:
+            self.logger.error("no portal_url given (yet)")
+            return 1
 
 #------------------------------------------------------------------------------
 import serial

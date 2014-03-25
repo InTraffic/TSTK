@@ -1,0 +1,259 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1. Driver Module &mdash; Test and Simulation Toolkit (TSTK) 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Test and Simulation Toolkit (TSTK) 0.0.1 documentation" href="index.html" />
+    <link rel="next" title="2. Simulator Module" href="simulator.html" />
+    <link rel="prev" title="4. Designs for the TSTK" href="Designs.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="simulator.html" title="2. Simulator Module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Designs.html" title="4. Designs for the TSTK"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Test and Simulation Toolkit (TSTK) 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="driver-module">
+<h1>1. Driver Module<a class="headerlink" href="#driver-module" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="software-reference-guide">
+<h2>1.1. Software reference guide<a class="headerlink" href="#software-reference-guide" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="capabilities">
+<h3>1.1.1. Capabilities<a class="headerlink" href="#capabilities" title="Permalink to this headline">¶</a></h3>
+<p>The driver module contains all drivers developed for use with the TSTK. The driver module contains a method which will allow you to get the desired driver.</p>
+</div>
+<div class="section" id="how-to-use-the-driver-module">
+<h3>1.1.2. How to use the driver module<a class="headerlink" href="#how-to-use-the-driver-module" title="Permalink to this headline">¶</a></h3>
+<p>To use the driver module you import the module in your program, like:</p>
+<div class="highlight-python"><div class="highlight"><pre>Import driver
+</pre></div>
+</div>
+<p>To get a new object from one of the available drivers, you should use the get_driver function.
+This function takes two arguments, a name and a driver_id. An example of this is:</p>
+<div class="highlight-python"><div class="highlight"><pre>portal_driver = driver.get_driver(“portal”, 1)
+</pre></div>
+</div>
+<p>This example will return a new instance of <a class="reference internal" href="#driver.Portal" title="driver.Portal"><tt class="xref py py-class docutils literal"><span class="pre">driver.Portal</span></tt></a>
+You can then use portal_driver by doing:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fetched_page</span> <span class="o">=</span> <span class="n">portal_driver</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="s">&quot;http://www.google.com&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">fetched_page</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The Portal driver will remember the url you wanted to fetch, so next time you can just use: <tt class="docutils literal"><span class="pre">fetched_page</span> <span class="pre">=</span> <span class="pre">portal_driver()</span></tt></p>
+<p>If you haven&#8217;t passed an url through <a class="reference internal" href="#driver.Portal.fetch" title="driver.Portal.fetch"><tt class="xref py py-meth docutils literal"><span class="pre">driver.Portal.fetch()</span></tt></a></p>
+<span class="target" id="module-driver"></span></div>
+</div>
+<div class="section" id="get-driver-function">
+<h2>1.2. Get driver function<a class="headerlink" href="#get-driver-function" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl class="function">
+<dt id="driver.get_driver">
+<tt class="descclassname">driver.</tt><tt class="descname">get_driver</tt><big>(</big><em>name</em>, <em>driver_id</em><big>)</big><a class="headerlink" href="#driver.get_driver" title="Permalink to this definition">¶</a></dt>
+<dd><p>function to get the desired driver object from this module.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>string</em>) &#8211; name of the driver (eg. portal or usbrly08b)</li>
+<li><strong>driver_id</strong> (<em>int</em>) &#8211; The id for the driver</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="portal-driver">
+<h2>1.3. Portal Driver<a class="headerlink" href="#portal-driver" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl class="class">
+<dt id="driver.Portal">
+<em class="property">class </em><tt class="descclassname">driver.</tt><tt class="descname">Portal</tt><big>(</big><em>portal_id=None</em><big>)</big><a class="headerlink" href="#driver.Portal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interface to a web portal</p>
+<dl class="method">
+<dt id="driver.Portal.fetch">
+<tt class="descname">fetch</tt><big>(</big><em>portal_url=None</em><big>)</big><a class="headerlink" href="#driver.Portal.fetch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch the current version of the web portal.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>portal_url</strong> (<em>string</em>) &#8211; the url to fetch, this url will be remembered
+untill the next call with a portal_url 
+specified.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The fetched web portal if an url is known or specified</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">1 if no url is known or specified</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="usbrly08b-driver">
+<h2>1.4. Usbrly08b Driver<a class="headerlink" href="#usbrly08b-driver" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl class="class">
+<dt id="driver.Usbrly08b">
+<em class="property">class </em><tt class="descclassname">driver.</tt><tt class="descname">Usbrly08b</tt><big>(</big><em>device_id</em>, <em>debug=False</em><big>)</big><a class="headerlink" href="#driver.Usbrly08b" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is an interface to the USB-RLY08 serial device.</p>
+<p>This class can be use directly through the open_relay and 
+close_relay methods. It is recommended to use this class as a 
+superclass for an implementation of a more descriptive subclass in 
+a project. This&#8217;ll allow for the addition of logging and better 
+understandable methods and/or functions.</p>
+<p>Attributes:
+device_id &#8211; the id of the usbrly08b board to communicate with.
+debug &#8211; whether or not this module is to run in a debugging mode.</p>
+<dl class="method">
+<dt id="driver.Usbrly08b.close_relay">
+<tt class="descname">close_relay</tt><big>(</big><em>relay_number</em><big>)</big><a class="headerlink" href="#driver.Usbrly08b.close_relay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close relay</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>relay_number</strong> (<em>int</em>) &#8211; The number of the relay to close</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="driver.Usbrly08b.open_relay">
+<tt class="descname">open_relay</tt><big>(</big><em>relay_number</em><big>)</big><a class="headerlink" href="#driver.Usbrly08b.open_relay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open relay</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>relay_number</strong> (<em>int</em>) &#8211; The number of the relay to open</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">1. Driver Module</a><ul>
+<li><a class="reference internal" href="#software-reference-guide">1.1. Software reference guide</a><ul>
+<li><a class="reference internal" href="#capabilities">1.1.1. Capabilities</a></li>
+<li><a class="reference internal" href="#how-to-use-the-driver-module">1.1.2. How to use the driver module</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#get-driver-function">1.2. Get driver function</a></li>
+<li><a class="reference internal" href="#portal-driver">1.3. Portal Driver</a></li>
+<li><a class="reference internal" href="#usbrly08b-driver">1.4. Usbrly08b Driver</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Designs.html"
+                        title="previous chapter">4. Designs for the TSTK</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="simulator.html"
+                        title="next chapter">2. Simulator Module</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/driver.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="simulator.html" title="2. Simulator Module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Designs.html" title="4. Designs for the TSTK"
+             >previous</a> |</li>
+        <li><a href="index.html">Test and Simulation Toolkit (TSTK) 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, InTraffic.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
