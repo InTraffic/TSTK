@@ -16,6 +16,10 @@ User Manual:
     scope
     software_summary
     access_to_software
+    driver_module_manual
+    simulator_module_manual
+    testsystem_module_manual
+    expanding_toolkit
     Designs
    
 Software Documentation:
