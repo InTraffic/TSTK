@@ -14,6 +14,11 @@ class Portal(object):
 
     def fetch(self, portal_url=None):
         """Fetch the current version of the web portal.
+        
+        The Portal driver will remember the url you wanted to fetch, so next 
+        time you can just use: ``portal_driver()``
+        If you haven't passed an url through :py:meth:`driver.Portal.fetch` the 
+        function will return 1.
 
         :param portal_url: the url to fetch, this url will be remembered
                            untill the next call with a portal_url 
