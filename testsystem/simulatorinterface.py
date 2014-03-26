@@ -60,6 +60,15 @@ class SimulatorInterface(object):
         self.command_link.send_pyobj(message)
 
 
+def get_simulator_interface(sim_interface_type):
+    """ Function to get a specific type of simulator interface.
+
+    :param sim_interface_type: The type of simulatorinterface to return.
+    :returns: The class for the specified simulatorinterface type.
+    """
+    simulator_interfaces = {"default":SimulatorInterface}
+    sim_interface = simulator_interfaces.get(sim_interface_type)
+    return sim_interface
 
 
 
