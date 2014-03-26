@@ -19,6 +19,20 @@ message has to be specified in the ``simulator.conf`` file.
 How to use the Simulator module
 ==================================
 
+Creating a Message class
+-------------------------
+You have to create a message class if you want to use this module. The 
+this message class will need to translate the messages you want to send 
+to the system that is being tested. It also has to translate the 
+messages you receive from that system, so it can be sent back to the 
+simulator interface. There are two methods that will be called:
+
+ - ``to_message(command)``. This will process the command from the 
+   testsystem and must return the message.
+ - ``from_message(message)``. This will process the message from the 
+   system you are testing and must return the command to send to the
+   testsytem.
+
 Configuring your simulators
 -----------------------------
 To configure your simulator yo uneed to specify some things for the 
