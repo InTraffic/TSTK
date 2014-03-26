@@ -58,11 +58,6 @@ The installation script will keep a log during the installation. When
 something does not execute as it should, the installation is aborted and
 everything will be reversed. This will al be logged.
 
-Security and privacy
----------------------
-The TSTK is distributed under the GPL v3 license, which is added as 
-appendix A.
-
 Assistance and problem reporting
 ------------------------------------------
 For assistance and problem or bug reporting you should go to the GitHub 
