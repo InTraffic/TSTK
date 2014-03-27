@@ -8,7 +8,7 @@
     
     <title>4. Driver Module reference guide &mdash; Test and Simulation Toolkit (TSTK) 0.0.1 documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -45,50 +45,7 @@
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">Test and Simulation Toolkit (TSTK) 0.0.1 documentation</a> &raquo;</li> 
       </ul>
-    </div>  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body">
-            
-  <div class="section" id="driver-module-reference-guide">
-<h1>4. Driver Module reference guide<a class="headerlink" href="#driver-module-reference-guide" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="software-reference-guide">
-<h2>4.1. Software reference guide<a class="headerlink" href="#software-reference-guide" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="capabilities">
-<h3>4.1.1. Capabilities<a class="headerlink" href="#capabilities" title="Permalink to this headline">¶</a></h3>
-<p>The driver module contains all drivers developed for use with the TSTK.
-The driver module contains a method which will allow you to get the
-desired driver.</p>
-</div>
-<div class="section" id="how-to-use-the-driver-module">
-<h3>4.1.2. How to use the driver module<a class="headerlink" href="#how-to-use-the-driver-module" title="Permalink to this headline">¶</a></h3>
-<p>To use the driver module you import the module in your program, like:</p>
-<div class="highlight-python"><div class="highlight"><pre>Import driver
-</pre></div>
-</div>
-<p>To get a new object from one of the available drivers, you should use
-the get_driver function.
-This function takes two arguments, a name and a driver_id.
-An example of this is:</p>
-<div class="highlight-python"><div class="highlight"><pre>portal_driver = driver.get_driver(“portal”, 1)
-</pre></div>
-</div>
-<p>This example will return a new instance of <a class="reference internal" href="driver.html#driver.Portal" title="driver.Portal"><tt class="xref py py-class docutils literal"><span class="pre">driver.Portal</span></tt></a>
-You can then use portal_driver by doing:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">fetched_page</span> <span class="o">=</span> <span class="n">portal_driver</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="s">&quot;http://www.google.com&quot;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">fetched_page</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-
-
-          </div>
-        </div>
-      </div>
+    </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
@@ -130,6 +87,49 @@ You can then use portal_driver by doing:</p>
     </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="driver-module-reference-guide">
+<h1>4. Driver Module reference guide<a class="headerlink" href="#driver-module-reference-guide" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="software-reference-guide">
+<h2>4.1. Software reference guide<a class="headerlink" href="#software-reference-guide" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="capabilities">
+<h3>4.1.1. Capabilities<a class="headerlink" href="#capabilities" title="Permalink to this headline">¶</a></h3>
+<p>The driver module contains all drivers developed for use with the TSTK.
+The driver module contains a method which will allow you to get the
+desired driver.</p>
+</div>
+<div class="section" id="how-to-use-the-driver-module">
+<h3>4.1.2. How to use the driver module<a class="headerlink" href="#how-to-use-the-driver-module" title="Permalink to this headline">¶</a></h3>
+<p>To use the driver module you import the module in your program, like:</p>
+<div class="highlight-python"><div class="highlight"><pre>Import driver
+</pre></div>
+</div>
+<p>To get a new object from one of the available drivers, you should use
+the get_driver function.
+This function takes two arguments, a name and a driver_id.
+An example of this is:</p>
+<div class="highlight-python"><div class="highlight"><pre>portal_driver = driver.get_driver(“portal”, 1)
+</pre></div>
+</div>
+<p>This example will return a new instance of <a class="reference internal" href="driver.html#driver.Portal" title="driver.Portal"><tt class="xref py py-class docutils literal"><span class="pre">driver.Portal</span></tt></a>
+You can then use portal_driver by doing:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fetched_page</span> <span class="o">=</span> <span class="n">portal_driver</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="s">&quot;http://www.google.com&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">fetched_page</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
         </div>
       </div>
       <div class="clearer"></div>
