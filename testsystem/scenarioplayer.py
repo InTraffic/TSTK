@@ -10,6 +10,7 @@ import subprocess  # To start simulation processes
 import sys
 import os
 import zmq
+import re
 
 from queue             import PriorityQueue
 from inspect           import getargspec
@@ -20,10 +21,13 @@ class ScenarioPlayerException(Exception):
     """Base class for ScenarioPlayer exceptions"""
     pass
 
+class TimeSpecException(Exception):
+    """Exception for bad timespecs"""
+    pass
 
 class ScenarioPlayer(object):
     """Stores and executes test scenario's"""
-    def __init__( self, test_system, system_name ):
+    def __init__(self, test_system):
         #: queue for the test steps
         self.priority_queue = PriorityQueue()
         self._start_time = None
@@ -33,11 +37,11 @@ class ScenarioPlayer(object):
 
         #: array with information about which function to call
         #: when data arrives at a particular socket.
-        self.call_backs  = {}
-        self.logger      = logging.getLogger('ScenarioPlayer')
+        self.call_backs = {}
+        self.logger = logging.getLogger('ScenarioPlayer')
 
         #: test system this scenario is part of
-        self.test_system   = test_system
+        self.test_system = test_system
         self.old = signal.signal(signal.SIGINT, self.control_c_handler)
 
         #: zmq context
@@ -111,10 +115,10 @@ class ScenarioPlayer(object):
             offset = current_time - self._start_time
             when = when + offset
 
-        self.priority_queue.put((when, step, show, question))
+        self.priority_queue.put((when, step))
 
 
-    def execute_step(self, step) :
+    def execute_step(self, step):
         """
         Execute the given step and log this.
         
@@ -126,12 +130,12 @@ class ScenarioPlayer(object):
         # Execute the step
         # Does the step require a parameter?
         if len(argspec.args) > 0 and argspec.args[0] == 'self' :
-            if len(argspec.args) == 2 :
+            if len(argspec.args) == 2:
                 step(self.test_system)
             else :
                 step()
         else:
-            if len(argspec.args) == 1 :
+            if len(argspec.args) == 1:
                 step(self.test_system)
             else :
                 step()
@@ -152,14 +156,14 @@ class ScenarioPlayer(object):
         last_commit_time = time.time()
         while (not self.priority_queue.empty()) and (self.runit):
             # Next step in the scenario
-            (delta_time, step, show, question) = self.priority_queue.get()
+            (delta_time, step) = self.priority_queue.get()
 
             current_time = time.time()
             # When should the step fire?
             expected_time = self._start_time + delta_time
             # print expected_time, current_time
             if (current_time >= expected_time):
-                self.execute_step(step, show, question)
+                self.execute_step(step)
             else:
                 # This results in a dictionary that contains
                 # as a key the fileno to normal sockets, or
@@ -170,20 +174,20 @@ class ScenarioPlayer(object):
                 # Enough time has passed?
                 current_time = time.time()
                 if (current_time >= expected_time):
-                    self.execute_step(step, show, question)
+                    self.execute_step(step)
                 else:
                     # Put the step back in the queue, because handling 
                     # of the filehandle event might add new events that
                     # come before this event.
                     delta_time = expected_time - current_time
-                    self.add_step(delta_time, step, show, question)
+                    self.add_step(delta_time, step)
                     # Handle the filehandle events
-                    for socket_key in self.call_backs.copy() : 
+                    for socket_key in self.call_backs.copy(): 
                             # Need copy here cause we might modify 
                             # the call_backs while in the call back
                             # functions.
                         if socket_key in socks and ( 
-                                socks[socket_key] == zmq.POLLIN) :
+                                socks[socket_key] == zmq.POLLIN):
                             callb = self.call_backs[socket_key]
                             function = callb[1]
                             function(callb[0], self)
@@ -235,4 +239,33 @@ class ScenarioPlayer(object):
             del self.call_backs[a_socket.fileno()]
         except AttributeError:
             del self.call_backs[a_socket]
+
+def parse_timespec(timespec):
+    """
+    Parse a time string and convert to seconds.
+
+    Parse a time specification of the format::
+
+       HH:MM:SS.ss
+
+    and convert it to the total number of seconds.
+
+    :raises: TimeSpecException in case the parsing fails.
+    :returns: a floating point number otherwise.
+    """
+    match = re.match(r"(\d\d):(\d\d):(\d\d.\d+|\d\d)", timespec)
+    if match is None :
+        match = re.match(r"(\d\d):(\d\d\.\d+|\d\d)", timespec)
+        if match is None :
+            raise TimeSpecException("Incorrect time specification "
+                    + timespec)
+        else:
+            seconds = float(match.group(1))*60 + \
+                      float(match.group(2))
+    else:
+        seconds = float(match.group(1)) * 3600.0 + \
+                  float(match.group(2))*60 + \
+                  float(match.group(3))
+
+    return seconds
 

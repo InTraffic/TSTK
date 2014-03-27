@@ -92,10 +92,10 @@ class Usbrly08b(object):
         :param relay_number: The number of the relay to open
         :type relay_number: int
         """
-        if not self.debug :
+        if not self.debug:
             command = 110
             command = command + relay_number
-            self.serial.write( chr( command ) )
+            self.serial.write(chr(command))
 
     def close_relay(self, relay_number):
         """Close relay 
@@ -103,10 +103,10 @@ class Usbrly08b(object):
         :param relay_number: The number of the relay to close
         :type relay_number: int
         """
-        if not self.debug :
+        if not self.debug:
             command = 100
             command = command + relay_number
-            self.serial.write( chr( command ) )
+            self.serial.write(chr(command))
 #------------------------------------------------------------------------------
 
 def get_driver(name, driver_id):

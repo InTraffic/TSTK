@@ -2,7 +2,9 @@ import logging
 
 from scenarioplayer import ScenarioPlayer
 from simulatorinterface import SimulatorInterface
-#from driver import driver as drivers
+import os
+import subprocess
+#from driver import driver
 
 import zmq
 
@@ -50,7 +52,7 @@ class TestSystem(object):
         scripts running at the same time.
         """
 
-        lock_name = 'log/{0}.lock'.format(test_system_name)
+        lock_name = '{0}.lock'.format(test_system_name)
         if os.path.exists( lock_name ):
             # Find the process that has lock_name open.
             subp = subprocess.Popen(['lsof', '-t', lock_name],
