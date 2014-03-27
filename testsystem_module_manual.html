@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>6. Test System Module reference guide &mdash; Test and Simulation Toolkit (TSTK) 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Test and Simulation Toolkit (TSTK) 0.0.1 documentation" href="index.html" />
+    <link rel="next" title="7. Expanding the TSTK" href="expanding_toolkit.html" />
+    <link rel="prev" title="5. Simulator Module reference guide" href="simulator_module_manual.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="expanding_toolkit.html" title="7. Expanding the TSTK"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="simulator_module_manual.html" title="5. Simulator Module reference guide"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Test and Simulation Toolkit (TSTK) 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="test-system-module-reference-guide">
+<h1>6. Test System Module reference guide<a class="headerlink" href="#test-system-module-reference-guide" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="capabilities">
+<h2>6.1. Capabilities<a class="headerlink" href="#capabilities" title="Permalink to this headline">¶</a></h2>
+<p>The Test System module is the core of the Testlab you can create with
+the TSTK. It consists of three parts:</p>
+<blockquote>
+<div><ul class="simple">
+<li>The testsystem class.</li>
+<li>The scenario player.</li>
+<li>Some simulator interfaces.</li>
+</ul>
+</div></blockquote>
+<p>The testsystem class is the part where testscripts will interact with
+the Testlab. Testscripts will tell the testsystem what drivers,
+simulatorinterfaces, steps to add and to play or stop playing the steps.
+The scenarioplayer  stores all steps for a test and executes them at the
+right time.</p>
+<p>The simulatorinterface(s) are for communicating with the running
+simulator(s), they have to be implemented by the developer(s) who create
+a Testlab. A simulatorinterface has to start the correct simulator
+through the simulator module within the TSTK. The simulator sends
+commands to the simulator and can receive replies.</p>
+</div>
+<div class="section" id="how-to-use-the-test-system-module">
+<h2>6.2. How to use the Test System module<a class="headerlink" href="#how-to-use-the-test-system-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="creating-a-simulatorinterface">
+<h3>6.2.1. Creating a simulatorinterface<a class="headerlink" href="#creating-a-simulatorinterface" title="Permalink to this headline">¶</a></h3>
+<p>To use a simulator interface, a developer for a Testlab must create an
+implementation of a specific simulator interface. If desired it can use
+the standard simulatorinterface class as superclass and inherit the
+attributes and methods from it. Be sure to add the new
+simulatorinterface to the list in the <tt class="docutils literal"><span class="pre">get_simulator_interface</span></tt>
+function in simulatorinterface.</p>
+</div>
+<div class="section" id="using-the-testsystem">
+<h3>6.2.2. Using the testsystem<a class="headerlink" href="#using-the-testsystem" title="Permalink to this headline">¶</a></h3>
+<p>To use the testsystem, you import it in your testscript with
+<tt class="docutils literal"><span class="pre">from</span> <span class="pre">testsystem</span> <span class="pre">import</span> <span class="pre">testsystem</span></tt>. You can then instantiate a new
+object from the TestSystem class to access the different methods as
+described in the &#8220;Software Documentation&#8221; part of this guide.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/intraffic_logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">6. Test System Module reference guide</a><ul>
+<li><a class="reference internal" href="#capabilities">6.1. Capabilities</a></li>
+<li><a class="reference internal" href="#how-to-use-the-test-system-module">6.2. How to use the Test System module</a><ul>
+<li><a class="reference internal" href="#creating-a-simulatorinterface">6.2.1. Creating a simulatorinterface</a></li>
+<li><a class="reference internal" href="#using-the-testsystem">6.2.2. Using the testsystem</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="simulator_module_manual.html"
+                        title="previous chapter">5. Simulator Module reference guide</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="expanding_toolkit.html"
+                        title="next chapter">7. Expanding the TSTK</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/testsystem_module_manual.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="expanding_toolkit.html" title="7. Expanding the TSTK"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="simulator_module_manual.html" title="5. Simulator Module reference guide"
+             >previous</a> |</li>
+        <li><a href="index.html">Test and Simulation Toolkit (TSTK) 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, InTraffic.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

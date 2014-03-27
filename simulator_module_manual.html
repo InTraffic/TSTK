@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>5. Simulator Module reference guide &mdash; Test and Simulation Toolkit (TSTK) 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Test and Simulation Toolkit (TSTK) 0.0.1 documentation" href="index.html" />
+    <link rel="next" title="6. Test System Module reference guide" href="testsystem_module_manual.html" />
+    <link rel="prev" title="4. Driver Module reference guide" href="driver_module_manual.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="testsystem_module_manual.html" title="6. Test System Module reference guide"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="driver_module_manual.html" title="4. Driver Module reference guide"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Test and Simulation Toolkit (TSTK) 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="simulator-module-reference-guide">
+<h1>5. Simulator Module reference guide<a class="headerlink" href="#simulator-module-reference-guide" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="capabilities">
+<h2>5.1. Capabilities<a class="headerlink" href="#capabilities" title="Permalink to this headline">¶</a></h2>
+<p>The simulator module contains multiple kinds of Simulators. The
+Simulators consist three parts:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>A daemon</li>
+<li>A dispatcher</li>
+<li>A message</li>
+</ol>
+</div></blockquote>
+<p>The simulator module contains an AbstractFactory which will allow you to
+get the desired concrete Daemon and Dispatcher. The specific message has
+to be created by the developers that use the TSTK to create a new
+Testlab. The location of the message.py file that contains the specific
+message has to be specified in the <tt class="docutils literal"><span class="pre">simulator.conf</span></tt> file.</p>
+</div>
+<div class="section" id="how-to-use-the-simulator-module">
+<h2>5.2. How to use the Simulator module<a class="headerlink" href="#how-to-use-the-simulator-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="creating-a-message-class">
+<h3>5.2.1. Creating a Message class<a class="headerlink" href="#creating-a-message-class" title="Permalink to this headline">¶</a></h3>
+<p>You have to create a message class if you want to use this module. The
+this message class will need to translate the messages you want to send
+to the system that is being tested. It also has to translate the
+messages you receive from that system, so it can be sent back to the
+simulator interface. There are two methods that will be called:</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">to_message(command)</span></tt>. This will process the command from the
+testsystem and must return the message.</li>
+<li><tt class="docutils literal"><span class="pre">from_message(message)</span></tt>. This will process the message from the
+system you are testing and must return the command to send to the
+testsytem.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="configuring-your-simulators">
+<h3>5.2.2. Configuring your simulators<a class="headerlink" href="#configuring-your-simulators" title="Permalink to this headline">¶</a></h3>
+<p>To configure your simulator yo uneed to specify some things for the
+dispatcher part in the <tt class="docutils literal"><span class="pre">simulator.conf</span></tt> file. The config files are
+parsed by the configparser module from the python libraries. An example
+of this is:</p>
+<div class="highlight-python"><div class="highlight"><pre>[dispatcher-tcp-2]
+MessagePath=/home/foo/bar/
+AcceptAddress=127.0.0.1
+ListenPort=9010
+CommandListenPort=9000
+MessageForwardPort=9001
+</pre></div>
+</div>
+<p>The entries in the config file that the dispatchers look for are:</p>
+<blockquote>
+<div><ul class="simple">
+<li>MessagePath</li>
+<li>CommandListenPort</li>
+<li>MessageForwardPort</li>
+</ul>
+</div></blockquote>
+<p>The dispatchers, excluding the serial dispatcher, also look for the
+following entries:</p>
+<blockquote>
+<div><ul class="simple">
+<li>AcceptAddress</li>
+<li>Listenport</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="starting-a-simulator">
+<h3>5.2.3. Starting a simulator<a class="headerlink" href="#starting-a-simulator" title="Permalink to this headline">¶</a></h3>
+<p>Starting a simulator is quite a simple thng to do. You import the
+simulator module with <tt class="docutils literal"><span class="pre">import</span> <span class="pre">simulator</span></tt>. Then you just excecute the
+<tt class="docutils literal"><span class="pre">simulator.start_simulator(&quot;simulator_type&quot;,</span> <span class="pre">simulator_id)</span></tt> function
+with the correct simulator type and id as arguments.</p>
+<p>The simulator module will start a new simulator of the specified type
+and with the given id. It will use this type and id to look for the
+config entries as specified in the above &#8220;Configuring your simulators&#8221;
+piece.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/intraffic_logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">5. Simulator Module reference guide</a><ul>
+<li><a class="reference internal" href="#capabilities">5.1. Capabilities</a></li>
+<li><a class="reference internal" href="#how-to-use-the-simulator-module">5.2. How to use the Simulator module</a><ul>
+<li><a class="reference internal" href="#creating-a-message-class">5.2.1. Creating a Message class</a></li>
+<li><a class="reference internal" href="#configuring-your-simulators">5.2.2. Configuring your simulators</a></li>
+<li><a class="reference internal" href="#starting-a-simulator">5.2.3. Starting a simulator</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="driver_module_manual.html"
+                        title="previous chapter">4. Driver Module reference guide</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="testsystem_module_manual.html"
+                        title="next chapter">6. Test System Module reference guide</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/simulator_module_manual.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="testsystem_module_manual.html" title="6. Test System Module reference guide"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="driver_module_manual.html" title="4. Driver Module reference guide"
+             >previous</a> |</li>
+        <li><a href="index.html">Test and Simulation Toolkit (TSTK) 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, InTraffic.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

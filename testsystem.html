@@ -1,0 +1,344 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>3. TestSystem Module &mdash; Test and Simulation Toolkit (TSTK) 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Test and Simulation Toolkit (TSTK) 0.0.1 documentation" href="index.html" />
+    <link rel="prev" title="2. Simulator Module" href="simulator.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="simulator.html" title="2. Simulator Module"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Test and Simulation Toolkit (TSTK) 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-testsystem">
+<span id="testsystem-module"></span><h1>3. TestSystem Module<a class="headerlink" href="#module-testsystem" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="testsystem.TestSystem">
+<em class="property">class </em><tt class="descclassname">testsystem.</tt><tt class="descname">TestSystem</tt><big>(</big><em>test_system_name</em><big>)</big><a class="headerlink" href="#testsystem.TestSystem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starting point when creating a test system for a specific
+system.</p>
+<p>Use this class by creating a subclass, so you can also add your own
+simulator interfaces.</p>
+<dl class="method">
+<dt id="testsystem.TestSystem.add_driver">
+<tt class="descname">add_driver</tt><big>(</big><em>name</em>, <em>driver</em>, <em>driver_id</em><big>)</big><a class="headerlink" href="#testsystem.TestSystem.add_driver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a driver to the test system. The configuration of the
+driver is done with a configuration file. It wil add a driver 
+to the list with the name as key and the specific driver as 
+the value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>string</em>) &#8211; The driver name.</li>
+<li><strong>driver</strong> (<em>string</em>) &#8211; The kind of driver.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="testsystem.TestSystem.add_scenario_player">
+<tt class="descname">add_scenario_player</tt><big>(</big><big>)</big><a class="headerlink" href="#testsystem.TestSystem.add_scenario_player" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the scenario player for the testsystem</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="testsystem.TestSystem.add_simulator_interface">
+<tt class="descname">add_simulator_interface</tt><big>(</big><em>name</em>, <em>sim_id</em>, <em>sim_interface</em><big>)</big><a class="headerlink" href="#testsystem.TestSystem.add_simulator_interface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new simulator interface to the list of 
+simulator_interfaces and also add a socket to the scenario
+player.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>string</em>) &#8211; The simulator name.</li>
+<li><strong>sim_id</strong> (<em>int</em>) &#8211; The id for the simulator interface.</li>
+<li><strong>sim_interface</strong> (<em>string</em>) &#8211; The kind of simulator interface.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="testsystem.TestSystem.add_step">
+<tt class="descname">add_step</tt><big>(</big><em>when</em>, <em>step</em><big>)</big><a class="headerlink" href="#testsystem.TestSystem.add_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <tt class="xref py py-func docutils literal"><span class="pre">ScenarioPlayer.add_step()</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="testsystem.TestSystem.context">
+<tt class="descname">context</tt><em class="property"> = None</em><a class="headerlink" href="#testsystem.TestSystem.context" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will be the zmq context.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="testsystem.TestSystem.drivers">
+<tt class="descname">drivers</tt><em class="property"> = {}</em><a class="headerlink" href="#testsystem.TestSystem.drivers" title="Permalink to this definition">¶</a></dt>
+<dd><p>The drivers used by the testsystem.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="testsystem.TestSystem.kill_previous_script">
+<tt class="descname">kill_previous_script</tt><big>(</big><em>test_system_name</em><big>)</big><a class="headerlink" href="#testsystem.TestSystem.kill_previous_script" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kill an already running test script. Can&#8217;t have to 
+scripts running at the same time.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="testsystem.TestSystem.logger">
+<tt class="descname">logger</tt><em class="property"> = None</em><a class="headerlink" href="#testsystem.TestSystem.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>The logger.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="testsystem.TestSystem.play">
+<tt class="descname">play</tt><big>(</big><big>)</big><a class="headerlink" href="#testsystem.TestSystem.play" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <tt class="xref py py-func docutils literal"><span class="pre">ScenarioPlayer.play()</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="testsystem.TestSystem.scenario_player">
+<tt class="descname">scenario_player</tt><em class="property"> = None</em><a class="headerlink" href="#testsystem.TestSystem.scenario_player" title="Permalink to this definition">¶</a></dt>
+<dd><p>The scenario player which will play the steps.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="testsystem.TestSystem.simulator_interfaces">
+<tt class="descname">simulator_interfaces</tt><em class="property"> = {}</em><a class="headerlink" href="#testsystem.TestSystem.simulator_interfaces" title="Permalink to this definition">¶</a></dt>
+<dd><p>The simulator_interfaces used by this test system.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="testsystem.TestSystem.stop">
+<tt class="descname">stop</tt><big>(</big><big>)</big><a class="headerlink" href="#testsystem.TestSystem.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <tt class="xref py py-func docutils literal"><span class="pre">ScenarioPlayer.stop()</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="testsystem-class">
+<h2>3.1. Testsystem Class<a class="headerlink" href="#testsystem-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt>
+<em class="property">class </em><tt class="descclassname">testsystem.</tt><tt class="descname">TestSystem</tt><big>(</big><em>test_system_name</em><big>)</big></dt>
+<dd><p>Starting point when creating a test system for a specific
+system.</p>
+<p>Use this class by creating a subclass, so you can also add your own
+simulator interfaces.</p>
+<dl class="method">
+<dt>
+<tt class="descname">add_driver</tt><big>(</big><em>name</em>, <em>driver</em>, <em>driver_id</em><big>)</big></dt>
+<dd><p>Add a driver to the test system. The configuration of the
+driver is done with a configuration file. It wil add a driver 
+to the list with the name as key and the specific driver as 
+the value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>string</em>) &#8211; The driver name.</li>
+<li><strong>driver</strong> (<em>string</em>) &#8211; The kind of driver.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">add_scenario_player</tt><big>(</big><big>)</big></dt>
+<dd><p>Set the scenario player for the testsystem</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">add_simulator_interface</tt><big>(</big><em>name</em>, <em>sim_id</em>, <em>sim_interface</em><big>)</big></dt>
+<dd><p>Add a new simulator interface to the list of 
+simulator_interfaces and also add a socket to the scenario
+player.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>string</em>) &#8211; The simulator name.</li>
+<li><strong>sim_id</strong> (<em>int</em>) &#8211; The id for the simulator interface.</li>
+<li><strong>sim_interface</strong> (<em>string</em>) &#8211; The kind of simulator interface.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">add_step</tt><big>(</big><em>when</em>, <em>step</em><big>)</big></dt>
+<dd><p>See <tt class="xref py py-func docutils literal"><span class="pre">ScenarioPlayer.add_step()</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">context</tt><em class="property"> = None</em></dt>
+<dd><p>This will be the zmq context.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">drivers</tt><em class="property"> = {}</em></dt>
+<dd><p>The drivers used by the testsystem.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">kill_previous_script</tt><big>(</big><em>test_system_name</em><big>)</big></dt>
+<dd><p>Kill an already running test script. Can&#8217;t have to 
+scripts running at the same time.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">logger</tt><em class="property"> = None</em></dt>
+<dd><p>The logger.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">play</tt><big>(</big><big>)</big></dt>
+<dd><p>See <tt class="xref py py-func docutils literal"><span class="pre">ScenarioPlayer.play()</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">scenario_player</tt><em class="property"> = None</em></dt>
+<dd><p>The scenario player which will play the steps.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">simulator_interfaces</tt><em class="property"> = {}</em></dt>
+<dd><p>The simulator_interfaces used by this test system.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">stop</tt><big>(</big><big>)</big></dt>
+<dd><p>See <tt class="xref py py-func docutils literal"><span class="pre">ScenarioPlayer.stop()</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/intraffic_logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">3. TestSystem Module</a><ul>
+<li><a class="reference internal" href="#testsystem-class">3.1. Testsystem Class</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="simulator.html"
+                        title="previous chapter">2. Simulator Module</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/testsystem.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="simulator.html" title="2. Simulator Module"
+             >previous</a> |</li>
+        <li><a href="index.html">Test and Simulation Toolkit (TSTK) 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, InTraffic.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

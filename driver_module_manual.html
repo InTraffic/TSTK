@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4. Driver Module reference guide &mdash; Test and Simulation Toolkit (TSTK) 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Test and Simulation Toolkit (TSTK) 0.0.1 documentation" href="index.html" />
+    <link rel="next" title="5. Simulator Module reference guide" href="simulator_module_manual.html" />
+    <link rel="prev" title="3. Access to the software" href="access_to_software.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="simulator_module_manual.html" title="5. Simulator Module reference guide"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="access_to_software.html" title="3. Access to the software"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Test and Simulation Toolkit (TSTK) 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="driver-module-reference-guide">
+<h1>4. Driver Module reference guide<a class="headerlink" href="#driver-module-reference-guide" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="software-reference-guide">
+<h2>4.1. Software reference guide<a class="headerlink" href="#software-reference-guide" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="capabilities">
+<h3>4.1.1. Capabilities<a class="headerlink" href="#capabilities" title="Permalink to this headline">¶</a></h3>
+<p>The driver module contains all drivers developed for use with the TSTK.
+The driver module contains a method which will allow you to get the
+desired driver.</p>
+</div>
+<div class="section" id="how-to-use-the-driver-module">
+<h3>4.1.2. How to use the driver module<a class="headerlink" href="#how-to-use-the-driver-module" title="Permalink to this headline">¶</a></h3>
+<p>To use the driver module you import the module in your program, like:</p>
+<div class="highlight-python"><div class="highlight"><pre>Import driver
+</pre></div>
+</div>
+<p>To get a new object from one of the available drivers, you should use
+the get_driver function.
+This function takes two arguments, a name and a driver_id.
+An example of this is:</p>
+<div class="highlight-python"><div class="highlight"><pre>portal_driver = driver.get_driver(“portal”, 1)
+</pre></div>
+</div>
+<p>This example will return a new instance of <a class="reference internal" href="driver.html#driver.Portal" title="driver.Portal"><tt class="xref py py-class docutils literal"><span class="pre">driver.Portal</span></tt></a>
+You can then use portal_driver by doing:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fetched_page</span> <span class="o">=</span> <span class="n">portal_driver</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="s">&quot;http://www.google.com&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">fetched_page</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/intraffic_logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">4. Driver Module reference guide</a><ul>
+<li><a class="reference internal" href="#software-reference-guide">4.1. Software reference guide</a><ul>
+<li><a class="reference internal" href="#capabilities">4.1.1. Capabilities</a></li>
+<li><a class="reference internal" href="#how-to-use-the-driver-module">4.1.2. How to use the driver module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="access_to_software.html"
+                        title="previous chapter">3. Access to the software</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="simulator_module_manual.html"
+                        title="next chapter">5. Simulator Module reference guide</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/driver_module_manual.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="simulator_module_manual.html" title="5. Simulator Module reference guide"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="access_to_software.html" title="3. Access to the software"
+             >previous</a> |</li>
+        <li><a href="index.html">Test and Simulation Toolkit (TSTK) 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, InTraffic.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
