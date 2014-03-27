@@ -77,7 +77,7 @@ class Usbrly08b(object):
         self.debug = debug
         self.logger = logging.getLogger('usbrly08b-driver-{0}'
                                         .format(device_id))
-        if not self.debug :
+        if not self.debug:
             try:
                 self.serial = serial.Serial( device, 19200, parity='N',
                         stopbits=2, timeout=None, xonxoff=0, rtscts=0)
