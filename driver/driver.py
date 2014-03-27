@@ -8,8 +8,8 @@ class Portal(object):
     """
 
     def __init__(self, portal_id = None,):
-        self.logger     = logging.getLogger('portal-driver-{0}'
-                                            .format(portal_id))
+        self.logger = logging.getLogger('portal-driver-{0}'
+                                        .format(portal_id))
         self.portal_url = None
 
     def fetch(self, portal_url=None):
@@ -75,11 +75,16 @@ class Usbrly08b(object):
         """
         device = '/dev/usbrly08_{0}'.format(device_id)
         self.debug = debug
-        self.dev_id = device_id
-        
+        self.logger = logging.getLogger('usbrly08b-driver-{0}'
+                                        .format(device_id))
         if not self.debug :
-            self.serial = serial.Serial( device, 19200, parity='N',
-                    stopbits=2, timeout=None, xonxoff=0, rtscts=0)
+            try:
+                self.serial = serial.Serial( device, 19200, parity='N',
+                        stopbits=2, timeout=None, xonxoff=0, rtscts=0)
+            except OSError as error:
+                self.logger.error("The device was not found, error given: "
+                             "{0}".format(error))
+                self.serial = None
 
     def open_relay(self, relay_number):
         """Open relay 
