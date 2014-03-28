@@ -4,7 +4,7 @@ from scenarioplayer import ScenarioPlayer
 import simulatorinterface
 import os
 import subprocess
-#from driver import driver
+from driver import driver
 
 import zmq
 
