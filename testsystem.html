@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3. TestSystem Module &mdash; Test and Simulation Toolkit (TSTK) 0.0.1 documentation</title>
+    <title>3. TestSystem &mdash; Test and Simulation Toolkit (TSTK) 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -49,8 +49,10 @@
             </a></p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">3. TestSystem Module</a><ul>
-<li><a class="reference internal" href="#testsystem-class">3.1. Testsystem Class</a></li>
+<li><a class="reference internal" href="#">3. TestSystem</a><ul>
+<li><a class="reference internal" href="#module-testsystem">3.1. Test System Module</a></li>
+<li><a class="reference internal" href="#module-scenarioplayer">3.2. Scenario Player module</a></li>
+<li><a class="reference internal" href="#module-simulatorinterface">3.3. Simulator Interface module</a></li>
 </ul>
 </li>
 </ul>
@@ -84,8 +86,10 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-testsystem">
-<span id="testsystem-module"></span><h1>3. TestSystem Module<a class="headerlink" href="#module-testsystem" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="testsystem">
+<h1>3. TestSystem<a class="headerlink" href="#testsystem" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-testsystem">
+<span id="test-system-module"></span><h2>3.1. Test System Module<a class="headerlink" href="#module-testsystem" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="testsystem.TestSystem">
 <em class="property">class </em><tt class="descclassname">testsystem.</tt><tt class="descname">TestSystem</tt><big>(</big><em>test_system_name</em><big>)</big><a class="headerlink" href="#testsystem.TestSystem" title="Permalink to this definition">¶</a></dt>
@@ -192,29 +196,94 @@ scripts running at the same time.</p>
 
 </dd></dl>
 
-<div class="section" id="testsystem-class">
-<h2>3.1. Testsystem Class<a class="headerlink" href="#testsystem-class" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-scenarioplayer">
+<span id="scenario-player-module"></span><h2>3.2. Scenario Player module<a class="headerlink" href="#module-scenarioplayer" title="Permalink to this headline">¶</a></h2>
+<p>Classes and function to execute test scenario&#8217;s</p>
 <dl class="class">
-<dt>
-<em class="property">class </em><tt class="descclassname">testsystem.</tt><tt class="descname">TestSystem</tt><big>(</big><em>test_system_name</em><big>)</big></dt>
-<dd><p>Starting point when creating a test system for a specific
-system.</p>
-<p>Use this class by creating a subclass, so you can also add your own
-simulator interfaces.</p>
+<dt id="scenarioplayer.ScenarioPlayer">
+<em class="property">class </em><tt class="descclassname">scenarioplayer.</tt><tt class="descname">ScenarioPlayer</tt><big>(</big><em>test_system</em><big>)</big><a class="headerlink" href="#scenarioplayer.ScenarioPlayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores and executes test scenario&#8217;s</p>
 <dl class="method">
-<dt>
-<tt class="descname">add_driver</tt><big>(</big><em>name</em>, <em>driver_type</em>, <em>driver_id</em><big>)</big></dt>
-<dd><p>Add a driver to the test system. The configuration of the
-driver is done with a configuration file. It wil add a driver 
-to the list with the name as key and the specific driver as 
-the value.</p>
+<dt id="scenarioplayer.ScenarioPlayer.add_socket">
+<tt class="descname">add_socket</tt><big>(</big><em>a_socket</em>, <em>call_back_function</em><big>)</big><a class="headerlink" href="#scenarioplayer.ScenarioPlayer.add_socket" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the given socket to the list of sockets to be watched.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>string</em>) &#8211; The driver name.</li>
-<li><strong>driver</strong> (<em>string</em>) &#8211; The kind of driver.</li>
+<li><strong>a_socket</strong> (<em>socket or zmq socket</em>) &#8211; Socket to add</li>
+<li><strong>call_back_function</strong> (<em>function</em>) &#8211; function to register in call_backs</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>If data arrives on the socket, the given call back function is
+called with as parameters the socket and a reference to the 
+scenario player.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scenarioplayer.ScenarioPlayer.add_step">
+<tt class="descname">add_step</tt><big>(</big><em>when</em>, <em>step</em><big>)</big><a class="headerlink" href="#scenarioplayer.ScenarioPlayer.add_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the given step to the list of scenario steps.
+:param when: tells when it is to be executed.</p>
+<p>The steps in scenario are executed approximately at the time 
+specified. If the time interval between two steps is large
+(1 s or more) it will be a close approximation.  If the time 
+interval is small (&lt;0.1) the execution can be slightly delayed. 
+:type when: int, float, string
+:param step: a reference to a function that takes a
+single parameter, a reference to the scenario player.
+:type step: function</p>
+<p><tt class="docutils literal"><span class="pre">when</span></tt></p>
+<p>If <tt class="docutils literal"><span class="pre">when</span></tt> is a number, it is interpreted
+as being a number of seconds.</p>
+<p><tt class="docutils literal"><span class="pre">when</span></tt> can also be a string of the following format:
+&#8220;mm:ss.ss&#8221;</p>
+<p>For instance:</p>
+<ul class="simple">
+<li>&#8220;00:30&#8221;    means 30 seconds</li>
+<li>&#8220;01:40&#8221;    means 1 minute 40 seconds</li>
+<li>&#8220;00:00.5&#8221;  means 0.5 a second</li>
+</ul>
+<p>Note that this method behaves differently according to when it 
+is called:</p>
+<ul class="simple">
+<li>If it is called before the scenario is started, <tt class="docutils literal"><span class="pre">when</span></tt>
+indicates offset from when the scenario is actually started.</li>
+<li>If it is called after the scenario is started, <tt class="docutils literal"><span class="pre">when</span></tt>
+indicates the number of seconds from when the method is called</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scenarioplayer.ScenarioPlayer.call_backs">
+<tt class="descname">call_backs</tt><em class="property"> = None</em><a class="headerlink" href="#scenarioplayer.ScenarioPlayer.call_backs" title="Permalink to this definition">¶</a></dt>
+<dd><p>array with information about which function to call
+when data arrives at a particular socket.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scenarioplayer.ScenarioPlayer.context">
+<tt class="descname">context</tt><em class="property"> = None</em><a class="headerlink" href="#scenarioplayer.ScenarioPlayer.context" title="Permalink to this definition">¶</a></dt>
+<dd><p>zmq context</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scenarioplayer.ScenarioPlayer.control_c_handler">
+<tt class="descname">control_c_handler</tt><big>(</big><em>unused1</em>, <em>unused2</em><big>)</big><a class="headerlink" href="#scenarioplayer.ScenarioPlayer.control_c_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler for control C</p>
+<p>Stops the scenario and logs the event.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>unused1</strong> &#8211; signal, but is not used.</li>
+<li><strong>unused2</strong> &#8211; frame, but s not used.</li>
 </ul>
 </td>
 </tr>
@@ -223,25 +292,166 @@ the value.</p>
 </dd></dl>
 
 <dl class="method">
-<dt>
-<tt class="descname">add_scenario_player</tt><big>(</big><big>)</big></dt>
-<dd><p>Set the scenario player for the testsystem</p>
+<dt id="scenarioplayer.ScenarioPlayer.execute_step">
+<tt class="descname">execute_step</tt><big>(</big><em>step</em><big>)</big><a class="headerlink" href="#scenarioplayer.ScenarioPlayer.execute_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute the given step and log this.</p>
+<p>:param step:a reference to a function that takes a
+single parameter, a reference to the scenario player.
+:type step: function</p>
 </dd></dl>
 
 <dl class="method">
-<dt>
-<tt class="descname">add_simulator_interface</tt><big>(</big><em>name</em>, <em>sim_id</em>, <em>sim_interface</em><big>)</big></dt>
-<dd><p>Add a new simulator interface to the list of 
-simulator_interfaces and also add a socket to the scenario
-player.</p>
+<dt id="scenarioplayer.ScenarioPlayer.play">
+<tt class="descname">play</tt><big>(</big><big>)</big><a class="headerlink" href="#scenarioplayer.ScenarioPlayer.play" title="Permalink to this definition">¶</a></dt>
+<dd><p>Play the current scenario.</p>
+<p>Uses select() to wait for passing of time until the next step 
+in the scenario and for events on the registered sockets or 
+other file handles.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scenarioplayer.ScenarioPlayer.poller">
+<tt class="descname">poller</tt><em class="property"> = None</em><a class="headerlink" href="#scenarioplayer.ScenarioPlayer.poller" title="Permalink to this definition">¶</a></dt>
+<dd><p>zmq poller to poll all registered sockets</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scenarioplayer.ScenarioPlayer.priority_queue">
+<tt class="descname">priority_queue</tt><em class="property"> = None</em><a class="headerlink" href="#scenarioplayer.ScenarioPlayer.priority_queue" title="Permalink to this definition">¶</a></dt>
+<dd><p>queue for the test steps</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scenarioplayer.ScenarioPlayer.remove_socket">
+<tt class="descname">remove_socket</tt><big>(</big><em>a_socket</em><big>)</big><a class="headerlink" href="#scenarioplayer.ScenarioPlayer.remove_socket" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the given socket from the lost of socket to 
+be watched.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>a_socket</strong> (<em>socket or zmq socket</em>) &#8211; Socket to add</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scenarioplayer.ScenarioPlayer.runit">
+<tt class="descname">runit</tt><em class="property"> = None</em><a class="headerlink" href="#scenarioplayer.ScenarioPlayer.runit" title="Permalink to this definition">¶</a></dt>
+<dd><p>flag to indicate a scenario should be run or stopped</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scenarioplayer.ScenarioPlayer.stop">
+<tt class="descname">stop</tt><big>(</big><big>)</big><a class="headerlink" href="#scenarioplayer.ScenarioPlayer.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop the current scenario.</p>
+<p>Once stopped a scenario cannot be resumed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scenarioplayer.ScenarioPlayer.test_system">
+<tt class="descname">test_system</tt><em class="property"> = None</em><a class="headerlink" href="#scenarioplayer.ScenarioPlayer.test_system" title="Permalink to this definition">¶</a></dt>
+<dd><p>test system this scenario is part of</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="scenarioplayer.ScenarioPlayerException">
+<em class="property">exception </em><tt class="descclassname">scenarioplayer.</tt><tt class="descname">ScenarioPlayerException</tt><a class="headerlink" href="#scenarioplayer.ScenarioPlayerException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for ScenarioPlayer exceptions</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="scenarioplayer.TimeSpecException">
+<em class="property">exception </em><tt class="descclassname">scenarioplayer.</tt><tt class="descname">TimeSpecException</tt><a class="headerlink" href="#scenarioplayer.TimeSpecException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception for bad timespecs</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scenarioplayer.parse_timespec">
+<tt class="descclassname">scenarioplayer.</tt><tt class="descname">parse_timespec</tt><big>(</big><em>timespec</em><big>)</big><a class="headerlink" href="#scenarioplayer.parse_timespec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse a time string and convert to seconds.</p>
+<p>Parse a time specification of the format:</p>
+<div class="highlight-python"><div class="highlight"><pre>HH:MM:SS.ss
+</pre></div>
+</div>
+<p>and convert it to the total number of seconds.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body">TimeSpecException in case the parsing fails.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a floating point number otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-simulatorinterface">
+<span id="simulator-interface-module"></span><h2>3.3. Simulator Interface module<a class="headerlink" href="#module-simulatorinterface" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="simulatorinterface.SimulatorInterface">
+<em class="property">class </em><tt class="descclassname">simulatorinterface.</tt><tt class="descname">SimulatorInterface</tt><big>(</big><em>name</em>, <em>sim_id</em>, <em>zmq_context</em><big>)</big><a class="headerlink" href="#simulatorinterface.SimulatorInterface" title="Permalink to this definition">¶</a></dt>
+<dd><p>A generic simulator interface for communication with the 
+corresponding simulator.</p>
+<dl class="method">
+<dt id="simulatorinterface.SimulatorInterface.do_callbacks">
+<tt class="descname">do_callbacks</tt><big>(</big><em>message</em><big>)</big><a class="headerlink" href="#simulatorinterface.SimulatorInterface.do_callbacks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call the callbacks for the message</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> &#8211; the message from the simulator to do the 
+callbacks for</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulatorinterface.SimulatorInterface.on_message">
+<tt class="descname">on_message</tt><big>(</big><em>scenario_player</em><big>)</big><a class="headerlink" href="#simulatorinterface.SimulatorInterface.on_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Receive a message from the simulator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>scenario_player</strong> &#8211; unused</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulatorinterface.SimulatorInterface.send">
+<tt class="descname">send</tt><big>(</big><em>message</em><big>)</big><a class="headerlink" href="#simulatorinterface.SimulatorInterface.send" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a message to the simulator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> &#8211; The message to send to the simulator</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulatorinterface.SimulatorInterface.set_callback">
+<tt class="descname">set_callback</tt><big>(</big><em>message_id</em>, <em>function</em><big>)</big><a class="headerlink" href="#simulatorinterface.SimulatorInterface.set_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a callback function for a message</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>string</em>) &#8211; The simulator name.</li>
-<li><strong>sim_id</strong> (<em>int</em>) &#8211; The id for the simulator interface.</li>
-<li><strong>sim_interface</strong> (<em>string</em>) &#8211; The kind of simulator interface.</li>
+<li><strong>message_id</strong> &#8211; the message id</li>
+<li><strong>function</strong> &#8211; the function to add</li>
 </ul>
 </td>
 </tr>
@@ -249,55 +459,22 @@ player.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt>
-<tt class="descname">add_step</tt><big>(</big><em>when</em>, <em>step</em><big>)</big></dt>
-<dd><p>See <tt class="xref py py-func docutils literal"><span class="pre">ScenarioPlayer.add_step()</span></tt></p>
 </dd></dl>
 
-<dl class="attribute">
-<dt>
-<tt class="descname">drivers</tt><em class="property"> = {}</em></dt>
-<dd><p>The drivers used by the testsystem.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<tt class="descname">kill_previous_script</tt><big>(</big><em>test_system_name</em><big>)</big></dt>
-<dd><p>Kill an already running test script. Can&#8217;t have to 
-scripts running at the same time.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<tt class="descname">logger</tt><em class="property"> = None</em></dt>
-<dd><p>The logger.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<tt class="descname">play</tt><big>(</big><big>)</big></dt>
-<dd><p>See <tt class="xref py py-func docutils literal"><span class="pre">ScenarioPlayer.play()</span></tt></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<tt class="descname">scenario_player</tt><em class="property"> = None</em></dt>
-<dd><p>The scenario player which will play the steps.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<tt class="descname">simulator_interfaces</tt><em class="property"> = {}</em></dt>
-<dd><p>The simulator_interfaces used by this test system.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<tt class="descname">stop</tt><big>(</big><big>)</big></dt>
-<dd><p>See <tt class="xref py py-func docutils literal"><span class="pre">ScenarioPlayer.stop()</span></tt></p>
-</dd></dl>
-
+<dl class="function">
+<dt id="simulatorinterface.get_simulator_interface">
+<tt class="descclassname">simulatorinterface.</tt><tt class="descname">get_simulator_interface</tt><big>(</big><em>sim_interface_type</em><big>)</big><a class="headerlink" href="#simulatorinterface.get_simulator_interface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to get a specific type of simulator interface.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sim_interface_type</strong> &#8211; The type of simulatorinterface to return.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The class for the specified simulatorinterface type.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
