@@ -1,5 +1,5 @@
 import unittest
-from testsystem import TestSystem
+import testsystem
 import scenarioplayer
 
 class Track(object):
@@ -46,7 +46,7 @@ class ScenarioPlayerTestCase(unittest.TestCase):
     """Tests for the scenarioplayer in the testsystem module"""
     
     def setUp(self):
-        self.test_system = TestSystem("Foo")
+        self.test_system = testsystem.TestSystem("Foo")
         self.test_system.add_scenario_player()
         self.scenario_player = self.test_system.scenario_player
 

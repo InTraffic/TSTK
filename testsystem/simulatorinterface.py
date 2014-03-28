@@ -10,14 +10,16 @@ class SimulatorInterface(object):
     def __init__(self, name, sim_id, zmq_context):
         self.logger = logging.getLogger('simulatorinterface.{0}{1}'
                                         .format(name, str(sim_id)))
+        self.message_port = 9001
+        self.command_port = 9000
         self.message_link = zmq_context.socket(zmq.SUB)
         self.message_link.connect("tcp://localhost:{0}"
-                                  .format(message_port))
-        self.message_link.setsockopt(zmq.SUBSCRIBE, "")
+                                  .format(self.message_port))
+        self.message_link.setsockopt_string(zmq.SUBSCRIBE, "")
 
         self.command_link = zmq_context.socket(zmq.PUB)
         self.command_link.connect("tcp://localhost:{0}"
-                                  .format(command_port))
+                                  .format(self.command_port))
 
         self.callbacks = {}
 

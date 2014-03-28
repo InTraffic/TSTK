@@ -1,7 +1,7 @@
 import logging
 
 from scenarioplayer import ScenarioPlayer
-from simulatorinterface import SimulatorInterface
+import simulatorinterface
 import os
 import subprocess
 #from driver import driver
@@ -15,8 +15,6 @@ class TestSystem(object):
     Use this class by creating a subclass, so you can also add your own
     simulator interfaces.
     """
-    #: This will be the zmq context.
-    context = None
 
     #: The scenario player which will play the steps.
     scenario_player = None
@@ -98,12 +96,15 @@ class TestSystem(object):
         :param sim_interface: The kind of simulator interface.
         :type sim_interface: string
         """
-        simulator_interface = SimulatorInterface(sim_interface)
+        a_sim_interface = simulatorinterface.get_simulator_interface(
+                                                sim_interface)
+        simulator_interface = a_sim_interface(name, sim_id, 
+                                self.scenario_player.context )
         self.simulator_interfaces.update({name:simulator_interface})
         self.scenario_player.add_socket(simulator_interface.message_link, 
                                         simulator_interface.on_message)
 
-    def add_driver(self, name, driver, driver_id):
+    def add_driver(self, name, driver_type, driver_id):
         """ Add a driver to the test system. The configuration of the
         driver is done with a configuration file. It wil add a driver 
         to the list with the name as key and the specific driver as 
@@ -114,7 +115,7 @@ class TestSystem(object):
         :param driver: The kind of driver.
         :type driver: string
         """
-        a_driver = drivers.get_driver(driver, driver_id)
+        a_driver = driver.get_driver(driver_type, driver_id)
         self.drivers.update({name:a_driver})
         
     def play(self):
