@@ -95,7 +95,7 @@ system.</p>
 simulator interfaces.</p>
 <dl class="method">
 <dt id="testsystem.TestSystem.add_driver">
-<tt class="descname">add_driver</tt><big>(</big><em>name</em>, <em>driver</em>, <em>driver_id</em><big>)</big><a class="headerlink" href="#testsystem.TestSystem.add_driver" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">add_driver</tt><big>(</big><em>name</em>, <em>driver_type</em>, <em>driver_id</em><big>)</big><a class="headerlink" href="#testsystem.TestSystem.add_driver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a driver to the test system. The configuration of the
 driver is done with a configuration file. It wil add a driver 
 to the list with the name as key and the specific driver as 
@@ -145,12 +145,6 @@ player.</p>
 <dt id="testsystem.TestSystem.add_step">
 <tt class="descname">add_step</tt><big>(</big><em>when</em>, <em>step</em><big>)</big><a class="headerlink" href="#testsystem.TestSystem.add_step" title="Permalink to this definition">¶</a></dt>
 <dd><p>See <tt class="xref py py-func docutils literal"><span class="pre">ScenarioPlayer.add_step()</span></tt></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="testsystem.TestSystem.context">
-<tt class="descname">context</tt><em class="property"> = None</em><a class="headerlink" href="#testsystem.TestSystem.context" title="Permalink to this definition">¶</a></dt>
-<dd><p>This will be the zmq context.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -209,7 +203,7 @@ system.</p>
 simulator interfaces.</p>
 <dl class="method">
 <dt>
-<tt class="descname">add_driver</tt><big>(</big><em>name</em>, <em>driver</em>, <em>driver_id</em><big>)</big></dt>
+<tt class="descname">add_driver</tt><big>(</big><em>name</em>, <em>driver_type</em>, <em>driver_id</em><big>)</big></dt>
 <dd><p>Add a driver to the test system. The configuration of the
 driver is done with a configuration file. It wil add a driver 
 to the list with the name as key and the specific driver as 
@@ -259,12 +253,6 @@ player.</p>
 <dt>
 <tt class="descname">add_step</tt><big>(</big><em>when</em>, <em>step</em><big>)</big></dt>
 <dd><p>See <tt class="xref py py-func docutils literal"><span class="pre">ScenarioPlayer.add_step()</span></tt></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<tt class="descname">context</tt><em class="property"> = None</em></dt>
-<dd><p>This will be the zmq context.</p>
 </dd></dl>
 
 <dl class="attribute">
