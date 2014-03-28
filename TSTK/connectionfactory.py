@@ -54,15 +54,14 @@ class ConnectionFactory(object):
     """
     
     # This dictionary contains all the known connection factories.
-    connection_types = {"TCP":TCPConnectionFactory(),
-                        "UDP":UDPConnectionFactory(),
-                        "Serial":SerialConnectionFactory(),
-                        "soap":SoapConnectionFactory(),
+    connection_types = {"tcp":TCPConnectionFactory(),
+                        "udp":UDPConnectionFactory(),
+                        "serial":SerialConnectionFactory(),
                         "http":HttpConnectionFactory()}
 
     def get_connection(self, connection_type):
         # return the correct connection type and get the daemon and dispatcher
         # for this specific connection.
-        return self.connection_types.get(connection_type)
+        return self.connection_types.get(connection_type.lower())
 
 

@@ -46,7 +46,7 @@ class TestSystem(object):
         
         
     def kill_previous_script( self, test_system_name ):
-        """Kill an already running test script. Can't have to 
+        """Kill an already running test script. Can't have two 
         scripts running at the same time.
         """
 
@@ -99,7 +99,7 @@ class TestSystem(object):
         a_sim_interface = simulatorinterface.get_simulator_interface(
                                                 sim_interface)
         simulator_interface = a_sim_interface(name, sim_id, 
-                                self.scenario_player.context )
+                                self.scenario_player.context)
         self.simulator_interfaces.update({name:simulator_interface})
         self.scenario_player.add_socket(simulator_interface.message_link, 
                                         simulator_interface.on_message)
