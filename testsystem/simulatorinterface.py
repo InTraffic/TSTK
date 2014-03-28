@@ -1,6 +1,7 @@
 import logging
 import zmq
 import copy
+from simulator import simulator
 
 class SimulatorInterface(object):
     """ A generic simulator interface for communication with the 
