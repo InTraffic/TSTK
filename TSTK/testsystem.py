@@ -1,7 +1,7 @@
 import logging
 
-from scenarioplayer import ScenarioPlayer
-import simulatorinterface
+from testsystem.scenarioplayer import ScenarioPlayer
+from testsystem import simulatorinterface
 import os
 import subprocess
 from driver import driver
