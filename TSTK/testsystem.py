@@ -1,10 +1,10 @@
 import logging
 
-from testsystem.scenarioplayer import ScenarioPlayer
-from testsystem import simulatorinterface
+from scenarioplayer import ScenarioPlayer
+import simulatorinterface
 import os
 import subprocess
-from driver import driver
+import driver
 
 import zmq
 

@@ -18,8 +18,6 @@ Daemon
 
 .. automodule:: daemon
     :members:
-
-    
     
 Dispatcher
 =======================
