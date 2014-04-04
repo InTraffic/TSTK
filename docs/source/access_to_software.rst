@@ -12,7 +12,7 @@ When you have downloaded the script, you can execute the following steps to show
 
  - Open a new terminal window.
  - Navigate to the folder where the install script has been downloaded, or moved, to.
- - Type this command: ``python2.7 TSTK-install.py --help``
+ - Type this command: ``python2.7 TSTK-installscript.py --help``
  - Hit the enter key to execute the command
  - You will now be shown the possible options and argument you can pass to the install script.
 
@@ -21,11 +21,11 @@ The possible options and arguments are displayed below::
     Test and Simulation Toolkit installer script
 
     Usage:
-    installscript.py install (existing TESTSYSTEM| 
+    TSTK-installscript.py install (existing TESTSYSTEM| 
                             development TOOLKIT_PACKAGE) 
                            [options...] FOLDER
-    installscript.py update FOLDER (PACKAGE...)
-    installscript.py -h | --help
+    TSTK-installscript.py update FOLDER (PACKAGE...)
+    TSTK-installscript.py -h | --help
     
     Arguments:
      TESTSYSTEM This is the package containing the testsystem that is to be 
