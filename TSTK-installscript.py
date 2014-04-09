@@ -81,10 +81,11 @@ logger.debug("The given arguments for this installation:{0}".format(
 try:
     if install:
         # Creating the new folder for the testing environment
-        mkdir_command = ["mkdir", foldername]
-        mkdir_command.append("{0}/docs".format(foldername))
-        mkdir_command.append("{0}/{0}".format(foldername))
-        mkdir_command.append("{0}/{0}/test".format(foldername))
+        mkdir_command = ["mkdir", "{0}-project/".format(foldername)]
+        mkdir_command.append("{0}-project/{0}/".format(foldername))
+        mkdir_command.append("{0}-project/{0}/docs".format(foldername))
+        mkdir_command.append("{0}-project/{0}/{0}".format(foldername))
+        mkdir_command.append("{0}-project/{0}/{0}/test".format(foldername))
         logger.debug("Executing mkdir command: {0}".format(mkdir_command))
 
         # Checking if the subprocess call is executed without an error. If 
@@ -104,9 +105,12 @@ try:
             logger.debug('Adding command (["rm", "-rf", {0}]) to cleanup list'
                          .format(foldername))
         # use touch to create empty files in the directories
-        touch_command = ["touch", "README.txt", "setup.py"]
-        touch_command.append("{0}/{0}/__init__.py".format(foldername))
-        touch_command.append("{0}/{0}/test/__init__.py".format(foldername))
+        touch_command = ["touch",]
+        touch_command.append("{0}-project/{0}/README.txt".format(foldername))
+        touch_command.append("{0}-project/{0}/setup.py".format(foldername))
+        touch_command.append("{0}-project/{0}/{0}/__init__.py".format(foldername))
+        touch_command.append("{0}-project/{0}/{0}/test/__init__.py"
+                             .format(foldername))
         logger.debug("Executing touch command: {0}".format(touch_command))
 
         if subprocess.call(touch_command):
@@ -135,7 +139,7 @@ try:
         for arg in local_packages:
         	copy_command.append(arg)
 
-        copy_command.append(foldername)
+        copy_command.append("{0}-project/".format(foldername))
         logger.debug("Executing copy command: {0}".format(copy_command))
         if subprocess.call(copy_command):
             error_message = "Error: copy command '{0}' failed".format(copy_command)
@@ -186,8 +190,10 @@ def after_install(options, home_dir):
             # and python2 will slowly die.
             logger.info("Installing virtualenv")
             subprocess.call(["python", (foldername +"-virtualenv-bootstrap.py"), 
-                         "-p", "/usr/bin/python3.2", foldername])
-            subprocess.call(["virtualenv", "-p", "/usr/bin/python2.7", foldername])
+                             "-p", "/usr/bin/python3.2", 
+                             "{0}-project/".format(foldername)])
+            subprocess.call(["virtualenv", "-p", "/usr/bin/python2.7",
+                             "{0}-project/".format(foldername)])
         elif no_virtualenv:
             logger.info("Not creating a virtualenv to install everything in")
             package_install_cmd = [pip_path, 'install'] + external_packages
@@ -212,8 +218,8 @@ def after_install(options, home_dir):
         if development:
             # Initialize a Git repository in the folder.
             logger.info("Initializing a new Git repository in "
-                        "{0}".format(foldername))
-            subprocess.call(["git", "init", foldername])
+                        "{0}-project/".format(foldername))
+            subprocess.call(["git", "init", "{0}-project/".format(foldername)])
     elif update:
         update_command = ["{0}/bin/pip".format(foldername), "--upgrade"]
         for package in update_packages:
