@@ -191,7 +191,7 @@ def after_install(options, home_dir):
             logger.info("Installing virtualenv")
             subprocess.call(["python", (foldername +"-virtualenv-bootstrap.py"), 
                              "-p", "/usr/bin/python3.2", 
-                             "{0}-project/".format(foldername)])
+                             "{0}-project".format(foldername)])
             subprocess.call(["virtualenv", "-p", "/usr/bin/python2.7",
                              "{0}-project/".format(foldername)])
         elif no_virtualenv:
@@ -221,7 +221,7 @@ def after_install(options, home_dir):
                         "{0}-project/".format(foldername))
             subprocess.call(["git", "init", "{0}-project/".format(foldername)])
     elif update:
-        update_command = ["{0}/bin/pip".format(foldername), "--upgrade"]
+        update_command = ["{0}-project/bin/pip".format(foldername), "--upgrade"]
         for package in update_packages:
             update_command.append(package)
         
