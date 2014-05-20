@@ -68,7 +68,7 @@ class ScenarioPlayer(object):
         self.stop()
 
 
-    def add_step( self, when, step):
+    def add_step( self, when, priority, step):
         """Add the given step to the list of scenario steps.
         :param when: tells when it is to be executed.
 
@@ -103,6 +103,9 @@ class ScenarioPlayer(object):
         * If it is called after the scenario is started, ``when``
           indicates the number of seconds from when the method is called
 
+        :param priority: A secondary priority, required when there are two
+        "when" values in the queue that are the same.
+        :type priority: integer
         """
         if not isinstance(when, int):
             if not isinstance(when, float):
@@ -115,7 +118,7 @@ class ScenarioPlayer(object):
             offset = current_time - self._start_time
             when = when + offset
 
-        self.priority_queue.put((when, step))
+        self.priority_queue.put((when, priority, step))
 
 
     def execute_step(self, step):
