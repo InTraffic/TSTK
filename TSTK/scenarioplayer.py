@@ -68,7 +68,7 @@ class ScenarioPlayer(object):
         self.stop()
 
 
-    def add_step( self, when, priority = 1, step):
+    def add_step( self, when, priority, step):
         """Add the given step to the list of scenario steps.
         :param when: tells when it is to be executed.
 
