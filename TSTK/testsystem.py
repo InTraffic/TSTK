@@ -80,7 +80,7 @@ class TestSystem(object):
         """
         self.scenario_player = ScenarioPlayer(self)
     
-    def add_step(self, when, priority = 1, step):
+    def add_step(self, when, step, priority = 1,):
         """ See :func:`ScenarioPlayer.add_step` """
         self.scenario_player.add_step(when, priority, step)
 
